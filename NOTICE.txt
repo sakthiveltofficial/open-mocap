@@ -1,0 +1,89 @@
+Open Mocap - NOTICE
+===================
+
+Open Mocap - video to BVH performance capture for Blender
+https://github.com/sakthiveltofficial/open-mocap
+
+Open Mocap is a modified version of BlendCap 1.0.5
+(https://github.com/Arcomade/BlendCap, upstream commit e323869):
+
+  BlendCap - video to BVH performance capture for Blender
+  Copyright (C) 2026 Arcomade
+
+Modifications Copyright (C) 2026 the Open Mocap contributors.
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version (SPDX identifier: GPL-3.0-or-later).
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License (the LICENSE file next to this notice) for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program. If not, see <https://www.gnu.org/licenses/>.
+
+Open Mocap is an independent project. It is not affiliated with or
+endorsed by Arcomade, and it does not use the BlendCap name, logo or
+promotional artwork.
+
+--------------------------------------------------------------------------------
+Changes from BlendCap 1.0.5 (summary; see the git history for details)
+--------------------------------------------------------------------------------
+
+  - Renamed the add-on and its identifiers (blendcap -> openmocap) and
+    removed the original branding assets, store links and donation links.
+  - Added the Fast capture engine: save_mp_data.py and
+    pipeline/mp_skeleton.py (Google MediaPipe pose + hand landmarks,
+    solved onto the same skeleton layout the SAM 3D Body pipeline uses).
+  - Added the Fast / Pro engine switch to the Capture panel and made the
+    BVH pipeline read the skeleton embedded in a capture (torch is no
+    longer needed to generate a BVH).
+  - Moved the torch-free preview helpers from save_mhr_data.py to
+    pipeline/body_preview.py so both engines share them.
+  - Added installer/ (install.py, install.sh, install.ps1, install.bat):
+    a uv-based installer for the Fast, Pro or both engines that downloads
+    models from their official sources.
+  - Small fixes: template export without a capture, preset file names,
+    the MoGe offline path variable.
+  - Rewrote README, NOTICE, CONTRIBUTING and parts of docs/.
+
+--------------------------------------------------------------------------------
+Third-party components
+--------------------------------------------------------------------------------
+
+Open Mocap depends on third-party software and model assets under their
+own licenses. The full inventory is in licenses/THIRD_PARTY.txt. Model
+weights are not part of this repository; the installer downloads them
+from their official sources. The license-significant ones:
+
+  - Ultralytics YOLO11 (AGPL-3.0, full text in licenses/LICENSE_AGPL.txt),
+    used by the Pro engine. Under section 13 of the GNU GPL v3, this
+    GPL-licensed work may be combined with that AGPL-3.0 component; the
+    AGPL's terms (including its network-use clause) continue to apply to
+    the YOLO portion. Source: https://github.com/sakthiveltofficial/open-mocap
+
+  - Meta SAM 3D Body model weights - Meta SAM License
+    (licenses/SAM_LICENSE.txt). Downloaded by the installer from Meta's
+    gated Hugging Face repository after the user accepts the license.
+
+  - Meta DINOv3 backbone - Meta DINOv3 License
+    (licenses/DINOV3_LICENSE.txt). The DINOv3 model source code is
+    bundled in models/dinov3_hub/; an optional DINOv3-derived ONNX export
+    can be downloaded from the public mirror published by Arcomade.
+
+  - Fast-SAM-3D-Body inference library - MIT wrapper
+    (models/fast-sam-3d-body/LICENSE) over Meta-SAM-licensed code. The
+    MIT terms cover the authors' acceleration changes; every source
+    file is (C) Meta and the SAM License above governs the Meta-origin
+    code. See licenses/THIRD_PARTY.txt.
+
+  - MediaPipe (Google) - Apache 2.0, used by the Fast engine and face
+    capture; MoGe (Microsoft) - MIT (bundled DINOv2 subcomponent:
+    Apache 2.0); PyTorch - BSD-3-Clause; ONNX Runtime - MIT; uv - MIT /
+    Apache 2.0; plus other permissive dependencies. See
+    licenses/THIRD_PARTY.txt for the complete list.
+
+This NOTICE is informational and does not modify any license.
