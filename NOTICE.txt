@@ -1,7 +1,7 @@
-BlendCap - NOTICE
+OpenMocap - NOTICE
 =================
 
-BlendCap - video to BVH performance capture for Blender
+OpenMocap - video to BVH performance capture for Blender
 Copyright (C) 2026 Arcomade
 
 This program is free software: you can redistribute it and/or modify it
@@ -21,28 +21,28 @@ with this program. If not, see <https://www.gnu.org/licenses/>.
 Third-party components
 --------------------------------------------------------------------------------
 
-BlendCap bundles, depends on, or redistributes third-party software and
+OpenMocap bundles, depends on, or redistributes third-party software and
 model assets under their own licenses. The full inventory is in
 licenses/THIRD_PARTY.txt. The license-significant ones:
 
   - Ultralytics YOLO11 (AGPL-3.0, full text in licenses/LICENSE_AGPL.txt).
-    BlendCap
+    OpenMocap
     incorporates YOLO11 as a core, always-loaded component. Under section
     13 of the GNU GPL v3,
     this GPL-licensed work may be combined with that AGPL-3.0 component
     and distributed; the AGPL's terms (including its network-use clause)
     continue to apply to the YOLO portion. Source availability is
-    satisfied by the public BlendCap repository
-    (https://github.com/Arcomade/BlendCap).
+    satisfied by the public OpenMocap repository
+    (https://@@@).
 
   - Meta SAM 3D Body model weights - Meta SAM License
     (licenses/SAM_LICENSE.txt).
-    Redistributed from the BlendCap Hugging Face mirror; a copy of that
+    Redistributed from the OpenMocap Hugging Face mirror; a copy of that
     license travels with the product as the SAM License requires.
 
   - Meta DINOv3 backbone - Meta DINOv3 License
     (licenses/DINOV3_LICENSE.txt).
-    BlendCap redistributes a DINOv3-derived ONNX export and bundles the
+    OpenMocap redistributes a DINOv3-derived ONNX export and bundles the
     DINOv3 model source code (models/dinov3_hub/); a copy of that license
     travels with the product as the DINOv3 License requires.
 

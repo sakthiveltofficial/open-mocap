@@ -1,4 +1,4 @@
-# BlendCap source-build dependencies (Python 3.12).
+# OpenMocap source-build dependencies (Python 3.12).
 #
 # These are the exact versions the supported (paid) installer validates
 # against. Building from source is possible but UNSUPPORTED — see
@@ -72,7 +72,7 @@ moge @ git+https://github.com/microsoft/MoGe.git@07444410f1e33f402353b99d6ccd26b
 #   onnx/*.onnx                  OPTIONAL — only the non-NVIDIA / ONNX Runtime path
 #                                reads these; the default NVIDIA / PyTorch path never
 #                                does. Public mirror:
-#                                https://huggingface.co/Blendcap/blendcap-onnx-exports
+#                                https://@@@
 #
 # A clean machine also needs system tools the supported installer bootstraps for
 # you but a manual build does not:

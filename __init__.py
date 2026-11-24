@@ -1,14 +1,14 @@
-"""BlendCap - Blender extension entry point.
+"""OpenMocap - Blender extension entry point.
 
 Blender 4.2+ discovers this package via the sibling blender_manifest.toml
-and imports it as ``bl_ext.<repo>.blendcap``. This module owns the add-on
+and imports it as ``bl_ext.<repo>.openmocap``. This module owns the add-on
 preferences (the dependency-installer UI) and delegates ALL feature
-registration to the blendcap/ subpackage's registration module.
+registration to the openmocap/ subpackage's registration module.
 
-Why a thin root package wrapping a blendcap/ subpackage: the helper scripts
+Why a thin root package wrapping a openmocap/ subpackage: the helper scripts
 the addon shells out to (save_mhr_data.py, npz_to_bvh.py), the installer/,
-the venv/, and models/ all live at this root, NEXT TO the blendcap/ package.
-helpers._addon_dir() resolves to this folder (parent of blendcap/), so the
+the venv/, and models/ all live at this root, NEXT TO the openmocap/ package.
+helpers._addon_dir() resolves to this folder (parent of openmocap/), so the
 subprocess pipeline keeps finding those scripts whether running from a dev
 checkout or an installed extension.
 """
@@ -16,15 +16,15 @@ import bpy
 import os
 import textwrap
 
-from .blendcap import registration as _registration
-from .blendcap.helpers import (
+from .openmocap import registration as _registration
+from .openmocap.helpers import (
     _addon_dir, read_install_marker, is_dependencies_installed,
     installer_files_present,
 )
-from .blendcap.operators_pipeline import draw_install_wizard
+from .openmocap.operators_pipeline import draw_install_wizard
 # Single shared channel flag (evaluated once at registration in panels):
 # True only for the source distribution, where donating is the ask.
-from .blendcap.panels import SHOW_DONATE_BUTTON
+from .openmocap.panels import SHOW_DONATE_BUTTON
 
 
 def _label_wrapped(col, context, text, icon='NONE'):
@@ -50,7 +50,7 @@ def _redraw_viewport_panels(self, context):
     """Refresh the sidebar / Output panels when a visibility pref toggles, so
     hiding the Setup section or Clear All button takes effect immediately
     instead of waiting for the next viewport interaction."""
-    from .blendcap.helpers import _tag_redraw
+    from .openmocap.helpers import _tag_redraw
     _tag_redraw('VIEW_3D', 'PROPERTIES')
 
 
@@ -74,18 +74,18 @@ def _update_default_video_source(self, context):
         return
     if self.sequencer_export_behavior != 'NOTIFY':
         return
-    from .blendcap.helpers import blendcap_state
-    if blendcap_state.get('vse_default_prompt_pending'):
+    from .openmocap.helpers import openmocap_state
+    if openmocap_state.get('vse_default_prompt_pending'):
         return
-    blendcap_state['vse_default_prompt_pending'] = True
+    openmocap_state['vse_default_prompt_pending'] = True
     # The prefs live in their own OS window, but a timer's default context
     # targets the main window - the dialog would open BEHIND Preferences.
     # Capture the window the click happened in and re-target the operator.
     src_window = getattr(context, "window", None)
 
     def _deferred_prompt():
-        blendcap_state['vse_default_prompt_pending'] = False
-        from .blendcap.helpers import addon_prefs
+        openmocap_state['vse_default_prompt_pending'] = False
+        from .openmocap.helpers import addon_prefs
         prefs = addon_prefs()
         if (prefs is None
                 or prefs.default_video_source != 'VSE'
@@ -97,9 +97,9 @@ def _update_default_video_source(self, context):
         try:
             if win is not None:
                 with bpy.context.temp_override(window=win):
-                    bpy.ops.blendcap.vse_default_prompt('INVOKE_DEFAULT')
+                    bpy.ops.openmocap.vse_default_prompt('INVOKE_DEFAULT')
             else:
-                bpy.ops.blendcap.vse_default_prompt('INVOKE_DEFAULT')
+                bpy.ops.openmocap.vse_default_prompt('INVOKE_DEFAULT')
         except RuntimeError:
             # Context can be invalid (e.g. a script-driven change); the
             # runtime fallback treats a lingering NOTIFY as Leave it
@@ -136,9 +136,9 @@ def _detected_backend_label():
     return marker.get("gpu_type") or None
 
 
-class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
+class OPENMOCAP_AddonPreferences(bpy.types.AddonPreferences):
     # Must equal the add-on's package name. As an installed extension that is
-    # bl_ext.<repo>.blendcap, and __package__ resolves to exactly that.
+    # bl_ext.<repo>.openmocap, and __package__ resolves to exactly that.
     bl_idname = __package__
 
     # ------------------------------------------------------------------
@@ -153,9 +153,9 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
     #   sequencer_export_behavior -> properties.update_video_source
     #   disable_timeline_autosnap -> mocap.load_proxy_to_vse playhead snap +
     #                                operators_pipeline capture start
-    #   hide_setup_section    -> panels.draw_blendcap_ui (Setup block)
-    #   hide_clear_all        -> panels.draw_blendcap_ui (Clear All button)
-    #   hide_donate_buttons   -> panels.draw_blendcap_ui + this draw()
+    #   hide_setup_section    -> panels.draw_openmocap_ui (Setup block)
+    #   hide_clear_all        -> panels.draw_openmocap_ui (Clear All button)
+    #   hide_donate_buttons   -> panels.draw_openmocap_ui + this draw()
     #                            (honor-system supporter toggle; only
     #                            relevant on source builds where
     #                            SHOW_DONATE_BUTTON is True)
@@ -170,7 +170,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         default=False,
         update=_redraw_viewport_panels,
         description=(
-            "Hide BlendCap's Donate / Support buttons here and in the "
+            "Hide OpenMocap's Donate / Support buttons here and in the "
             "3D-viewport panel. Works on the honor system - if you've "
             "chipped in (thank you!) or just want the buttons gone, "
             "tick this. Untick any time to bring them back"))
@@ -181,7 +181,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         default=False,
         description=(
             "Save tracking data (captures, proxies, NPZ files) to a folder "
-            "you choose. By default BlendCap saves next to your .blend file, "
+            "you choose. By default OpenMocap saves next to your .blend file, "
             "or to a temporary folder (cleared when Blender closes) if the "
             "project hasn't been saved yet. Turn this on to use your chosen "
             "folder instead of that temporary one, so the data isn't cleared "
@@ -261,7 +261,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         default='FILE',
         update=_update_default_video_source,
         description=(
-            "Which BlendCap video capture source is selected by default when "
+            "Which OpenMocap video capture source is selected by default when "
             "you open Blender. Set this to \"Video Editor Strip\" if you "
             "usually prefer to capture videos from the timeline"))
     sequencer_export_behavior: bpy.props.EnumProperty(  # type: ignore
@@ -298,7 +298,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         default=False,
         update=_redraw_viewport_panels,
         description=(
-            "Hide the \"Setup\" section at the top of the BlendCap sidebar "
+            "Hide the \"Setup\" section at the top of the OpenMocap sidebar "
             "panel. Turn this on once your workspace is set up and you no "
             "longer need those buttons"))
     hide_clear_all: bpy.props.BoolProperty(  # type: ignore
@@ -321,7 +321,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         # drawn inline rather than as a popup so its buttons are greyable,
         # correctly ordered, and never clipped). Cancel/Install collapse it
         # back to the idle view below.
-        if getattr(context.window_manager, "blendcap_install_active", False):
+        if getattr(context.window_manager, "openmocap_install_active", False):
             draw_install_wizard(context, layout)
             return
 
@@ -332,11 +332,11 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         # button for a thank-you.
         if SHOW_DONATE_BUTTON:
             if self.hide_donate_buttons:
-                layout.label(text="Thank you for supporting BlendCap!",
+                layout.label(text="Thank you for supporting OpenMocap!",
                              icon='FUND')
             else:
                 row = layout.row()
-                row.operator("blendcap.donate", text="Donate / Support",
+                row.operator("openmocap.donate", text="Donate / Support",
                              icon='FUND')
             layout.prop(self, "hide_donate_buttons")
             layout.separator()
@@ -371,7 +371,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
                 box.label(text="    " + "    ".join(details))
             if has_installer:
                 row = box.row()
-                row.operator("blendcap.install_dependencies",
+                row.operator("openmocap.install_dependencies",
                              text="Reinstall Dependencies",
                              icon='FILE_REFRESH').force = True
         elif not has_installer:
@@ -382,7 +382,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
             _label_wrapped(
                 col, context,
                 "This is the source distribution - the one-click "
-                "dependency installer ships with the paid BlendCap. "
+                "dependency installer ships with the paid OpenMocap. "
                 "Running from source means building the Python "
                 "environment at venv/ and fetching the model weights "
                 "into checkpoints/ yourself (see requirements.txt; "
@@ -394,7 +394,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
             col.label(text="You'll be shown the Meta SAM License to accept first.")
             row = box.row()
             row.scale_y = 1.3
-            row.operator("blendcap.install_dependencies",
+            row.operator("openmocap.install_dependencies",
                          text="Install Dependencies",
                          icon='IMPORT').force = False
 
@@ -414,11 +414,11 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         # install wizard is inline). First click arms; a red confirm/cancel
         # block then appears below.
         armed = getattr(context.window_manager,
-                        "blendcap_uninstall_armed", False)
+                        "openmocap_uninstall_armed", False)
         sub = row.row(align=True)
         sub.enabled = installed and not armed
         sub.alert = True
-        sub.operator("blendcap.uninstall_dependencies",
+        sub.operator("openmocap.uninstall_dependencies",
                      text="Uninstall", icon='TRASH').mode = 'ARM'
         if installed and armed:
             warn = box.box()
@@ -431,9 +431,9 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
                            "Blender may freeze briefly while they're removed, "
                            "and you'll need to reinstall before capturing again.")
             r = warn.row(align=True)
-            r.operator("blendcap.uninstall_dependencies",
+            r.operator("openmocap.uninstall_dependencies",
                        text="Confirm Uninstall", icon='TRASH').mode = 'RUN'
-            r.operator("blendcap.uninstall_dependencies",
+            r.operator("openmocap.uninstall_dependencies",
                        text="Cancel", icon='X').mode = 'CANCEL'
 
     def _draw_locations(self, context, layout):
@@ -522,7 +522,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
         box.separator()
         col = box.column(align=True)
         _label_wrapped(col, context,
-                       "In order to keep the BlendCap workspace in Blender by "
+                       "In order to keep the OpenMocap workspace in Blender by "
                        "default:", icon='INFO')
         _label_wrapped(col, context,
                        "1. Open it once from the sidebar Setup section.")
@@ -552,7 +552,7 @@ class BLENDCAP_AddonPreferences(bpy.types.AddonPreferences):
 
 
 classes = (
-    BLENDCAP_AddonPreferences,
+    OPENMOCAP_AddonPreferences,
 )
 
 

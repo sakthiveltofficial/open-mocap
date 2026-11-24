@@ -6,7 +6,7 @@ A capture only produces tracking data. This is where you turn that data into an 
 
 ## Generating the BVH
 
-Expand the **BVH Settings** section, choose what the armature should include, and click **Generate/Reload BVH**. BlendCap builds the armature from your selected clip's capture and imports it into the scene.
+Expand the **BVH Settings** section, choose what the armature should include, and click **Generate/Reload BVH**. OpenMocap builds the armature from your selected clip's capture and imports it into the scene.
 
 The included toggles:
 
@@ -52,7 +52,7 @@ These sliders preview live on the selected armature; click **Bake Settings to BV
 
 ![Straightening a tilted performance](images/17-camera-offset.png)
 
-> **Baking stacks.** Each bake adds the current slider values on top of what's already baked into that armature, and the sliders reset to zero afterward. One thing to know: if you re-import a clip from your library, BlendCap can't read how much was previously baked into it, so the panel reminds you that the first bake on a re-imported armature starts fresh.
+> **Baking stacks.** Each bake adds the current slider values on top of what's already baked into that armature, and the sliders reset to zero afterward. One thing to know: if you re-import a clip from your library, OpenMocap can't read how much was previously baked into it, so the panel reminds you that the first bake on a re-imported armature starts fresh.
 
 ---
 
@@ -82,7 +82,7 @@ Usually the most valuable cleanup step: it detects when a foot is in contact wit
 
 ![Feet Define Floor Fixes bad squat](images/18-1-feet-floor.png)
 
-- **Sensitivity**: how aggressively BlendCap decides a foot is in contact with the ground. Higher values catch more contacts (good for footage with lots of held poses); lower is more conservative (good when there are lots of genuine quick steps). It's also the fix for floating feet: a contact that drifted off the floor can sit too high for the detector to recognize it as one, which is exactly what keeps it from being corrected, and a higher setting widens what counts so grounding can catch it and pull it back down.
+- **Sensitivity**: how aggressively OpenMocap decides a foot is in contact with the ground. Higher values catch more contacts (good for footage with lots of held poses); lower is more conservative (good when there are lots of genuine quick steps). It's also the fix for floating feet: a contact that drifted off the floor can sit too high for the detector to recognize it as one, which is exactly what keeps it from being corrected, and a higher setting widens what counts so grounding can catch it and pull it back down.
 - **Max Gap**: any contacts closer together in time than this (in seconds) are merged into one continuous contact.
 - **Max Lift**: any lifts that go higher than this value (in cm) between contacts will be considered a real footstep or leg lift, and will not be merged.
 - **Bridge Phantom Lifts**: bridges the gaps Max Gap can't: with this on, a contact can break for _any_ length of time and still be merged, as long as the foot stayed low and came back down in the same spot, a sign the tracker lost the contact rather than the foot really stepping. The **Recovery Lift** value sets how high the foot can rise while still being treated as one of these misreads.

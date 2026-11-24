@@ -4,7 +4,7 @@
   "target_kind": "rigify_control",
   "namespace_strip": "",
   "auto_bake_ik": false,
-  "_note": "Body + hands mapping for transferring an already-animated Mixamo skeleton onto a Rigify rig (source = mixamorig:Hips/Spine/Spine1/Spine2/.../LeftToeBase, target = Rigify *_fk / spine_fk.*). Derived from rigify_new.json (BlendCap BVH source) with the Mixamo-source substitutions used in mixamo_to_mixamo_ctrl.json: source_prefix='mixamorig:', use_world_location, custom_ik_sources. SPINE remap: Mixamo Hips drives spine_fk (the slot BlendCap Spine drove); Spine/Spine1/Spine2 shift down into spine_fk.001/.002/.003. LOCOMOTION: Mixamo has no Root, so Hips alone drives root (LOC XY) and torso (LOC Z) plus spine_fk (ROT). NO FACE: Rigify face mapping is dropped because Mixamo capture never carries face data — for face animation use the BlendCap-source rigify_new.json preset.",
+  "_note": "Body + hands mapping for transferring an already-animated Mixamo skeleton onto a Rigify rig (source = mixamorig:Hips/Spine/Spine1/Spine2/.../LeftToeBase, target = Rigify *_fk / spine_fk.*). Derived from rigify_new.json (OpenMocap BVH source) with the Mixamo-source substitutions used in mixamo_to_mixamo_ctrl.json: source_prefix='mixamorig:', use_world_location, custom_ik_sources. SPINE remap: Mixamo Hips drives spine_fk (the slot OpenMocap Spine drove); Spine/Spine1/Spine2 shift down into spine_fk.001/.002/.003. LOCOMOTION: Mixamo has no Root, so Hips alone drives root (LOC XY) and torso (LOC Z) plus spine_fk (ROT). NO FACE: Rigify face mapping is dropped because Mixamo capture never carries face data — for face animation use the OpenMocap-source rigify_new.json preset.",
   "ik_chains": [
     {
       "owner": "MCH-shin_ik.L",

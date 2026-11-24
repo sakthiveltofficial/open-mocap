@@ -1,30 +1,30 @@
 
 <div align="center">
 
-<img src="assets/sh-banner-01-logo.jpg" alt="BlendCap" width="720">
+<img src="assets/sh-banner-01-logo.jpg" alt="OpenMocap" width="720">
 
-# BlendCap
+# OpenMocap
 
 ### Markerless performance capture for Blender: video in, animation out.
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![Blender 4.2+](https://img.shields.io/badge/Blender-4.2%2B-orange.svg)](https://www.blender.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)](#requirements)
-[![Get BlendCap](https://img.shields.io/badge/Get%20BlendCap-Buy%20now-brightgreen.svg)](#get-blendcap)
+[![Get OpenMocap](https://img.shields.io/badge/Get%20OpenMocap-Buy%20now-brightgreen.svg)](#get-openmocap)
 
-<img src="assets/sh-banner-03-montage.webp" alt="BlendCap turning ordinary video into character animation" width="720">
+<img src="assets/sh-banner-03-montage.webp" alt="OpenMocap turning ordinary video into character animation" width="720">
 
 </div>
 
 ---
 
-BlendCap reconstructs a full **performance**, body, hands, and face, from an ordinary video and retargets it onto your Blender rig. No motion-capture suit, no markers, no special hardware, and no second camera. Record on a phone or use footage you already have.
+OpenMocap reconstructs a full **performance**, body, hands, and face, from an ordinary video and retargets it onto your Blender rig. No motion-capture suit, no markers, no special hardware, and no second camera. Record on a phone or use footage you already have.
 
 > ### About this repository
 >
-> This is the **public source repository** for the BlendCap add-on, published so the source is available as its license requires (BlendCap is GPL-3.0-or-later and includes the AGPL-3.0 YOLO11 detector, see [Licensing](#licensing)).
+> This is the **public source repository** for the OpenMocap add-on, published so the source is available as its license requires (OpenMocap is GPL-3.0-or-later and includes the AGPL-3.0 YOLO11 detector, see [Licensing](#licensing)).
 >
-> **Most people want the [paid build](#get-blendcap)**: it adds the one-click dependency installer, bundled model access so the setup just works, updates, and support. Building from this source yourself is possible but **advanced and unsupported**, there are no install scripts here by design; the requirements and model sources are documented in [`requirements.txt`](requirements.txt).
+> **Most people want the [paid build](#get-openmocap)**: it adds the one-click dependency installer, bundled model access so the setup just works, updates, and support. Building from this source yourself is possible but **advanced and unsupported**, there are no install scripts here by design; the requirements and model sources are documented in [`requirements.txt`](requirements.txt).
 
 ---
 
@@ -33,7 +33,7 @@ BlendCap reconstructs a full **performance**, body, hands, and face, from an ord
 - [Features](#features)
 - [See it in action](#see-it-in-action)
 - [Requirements](#requirements)
-- [Get BlendCap](#get-blendcap)
+- [Get OpenMocap](#get-openmocap)
 - [Documentation](#documentation)
 - [How it works](#how-it-works)
 - [Roadmap](#roadmap)
@@ -82,9 +82,9 @@ BlendCap reconstructs a full **performance**, body, hands, and face, from an ord
 
 See the full [system requirements](#documentation) in the documentation for the GPU tiers and the CPU-only fallback.
 
-## Get BlendCap
+## Get OpenMocap
 
-The easiest way to use BlendCap is the **paid build**: install it in Blender and click once. It handles everything to get you up and running quickly and effortlessly:
+The easiest way to use OpenMocap is the **paid build**: install it in Blender and click once. It handles everything to get you up and running quickly and effortlessly:
 
 - One-click dependency installer (no terminal, no manual Python)
 - Bundled model access, so the ~11 GB setup just works
@@ -93,13 +93,13 @@ The easiest way to use BlendCap is the **paid build**: install it in Blender and
 
 <div align="center">
 
-### → [**Get BlendCap on Gumroad**][store-link] ←
+### → [**Get OpenMocap on Gumroad**][store-link] ←
 ### → [**Also on Superhive (Blender Market)**][superhive-link] ←
 
 </div>
 
-[store-link]: https://arcomade.gumroad.com/l/BlendCap
-[superhive-link]: https://superhivemarket.com/products/blendcap
+[store-link]: https://@@@
+[superhive-link]: https://superhivemarket.com/products/openmocap
 
 ## Documentation
 
@@ -114,9 +114,9 @@ flowchart LR
     BVH --> R[retarget onto your rig<br/>FK + IK]
 ```
 
-BlendCap runs Meta's **SAM 3D Body** (a 127-joint body+hand model with a **DINOv3** vision backbone, plus **MoGe** for camera field-of-view) to reconstruct the body, and **MediaPipe** for the face. Inference is accelerated by the **Fast-SAM-3D-Body** library on **PyTorch** / **ONNX Runtime**. The result is exported as a BVH and retargeted onto your character.
+OpenMocap runs Meta's **SAM 3D Body** (a 127-joint body+hand model with a **DINOv3** vision backbone, plus **MoGe** for camera field-of-view) to reconstruct the body, and **MediaPipe** for the face. Inference is accelerated by the **Fast-SAM-3D-Body** library on **PyTorch** / **ONNX Runtime**. The result is exported as a BVH and retargeted onto your character.
 
-Where it lives in the source: capture runs in [`save_mhr_data.py`](save_mhr_data.py) / [`save_face_data.py`](save_face_data.py); the post-processing passes (foot grounding, depth-noise filtering, hand solving, tracking-failure repair, face refinement) in [`pipeline/`](pipeline/); and the retargeting engine (FK bake, IK conversion, constraint simulation, bone-map matching) in [`blendcap/retarget/`](blendcap/retarget/).
+Where it lives in the source: capture runs in [`save_mhr_data.py`](save_mhr_data.py) / [`save_face_data.py`](save_face_data.py); the post-processing passes (foot grounding, depth-noise filtering, hand solving, tracking-failure repair, face refinement) in [`pipeline/`](pipeline/); and the retargeting engine (FK bake, IK conversion, constraint simulation, bone-map matching) in [`openmocap/retarget/`](openmocap/retarget/).
 
 ## Roadmap
 
@@ -135,9 +135,9 @@ Directions actively being worked toward, not dated promises, priorities shift wi
 
 ## Licensing
 
-BlendCap is licensed **GPL-3.0-or-later**. © 2026 Arcomade. See [`LICENSE`](LICENSE) and [`NOTICE.txt`](NOTICE.txt).
+OpenMocap is licensed **GPL-3.0-or-later**. © 2026 Arcomade. See [`LICENSE`](LICENSE) and [`NOTICE.txt`](NOTICE.txt).
 
-Because BlendCap includes the **AGPL-3.0** Ultralytics YOLO11 detector as a core, always-loaded component, the whole add-on is distributed under GPL v3 (which bridges to the AGPL component under section 13), which is why this source is, and must remain, public.
+Because OpenMocap includes the **AGPL-3.0** Ultralytics YOLO11 detector as a core, always-loaded component, the whole add-on is distributed under GPL v3 (which bridges to the AGPL component under section 13), which is why this source is, and must remain, public.
 
 Bundled / redistributed components keep their own licenses; full texts are in [`licenses/`](licenses/):
 
@@ -152,11 +152,11 @@ Bundled / redistributed components keep their own licenses; full texts are in [`
 | ICT-FaceKit (USC ICT) | Face expression basis (derived data asset) | MIT |
 | PyTorch / ONNX Runtime | Runtimes | BSD-3-Clause / MIT |
 
-> The **animation you create** with BlendCap is yours to use, including commercially. The SAM License permits commercial use royalty-free; you're responsible for having the rights to the footage you capture.
+> The **animation you create** with OpenMocap is yours to use, including commercially. The SAM License permits commercial use royalty-free; you're responsible for having the rights to the footage you capture.
 
 ## Acknowledgements
 
-BlendCap stands on the work of these projects and the teams behind them:
+OpenMocap stands on the work of these projects and the teams behind them:
 
 - [SAM 3D Body](https://github.com/facebookresearch/sam-3d-body) (Meta)
 - [DINOv3](https://github.com/facebookresearch/dinov3) (Meta)

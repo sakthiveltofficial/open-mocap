@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""convert_source.py — Convert image sequences or re-rate video for BlendCap pipeline.
+"""convert_source.py — Convert image sequences or re-rate video for OpenMocap pipeline.
 
 Image sequences:  --image-dir DIR [--elements-file FILE] --output OUT --fps FPS
 Video re-rate:    --video PATH --output OUT --fps FPS [--start-frame N] [--max-frames N]
 
-Reports [PROGRESS nn] status for BlendCap UI integration.
+Reports [PROGRESS nn] status for OpenMocap UI integration.
 """
 import argparse
 import os
@@ -306,7 +306,7 @@ def convert_video(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert source media to MP4 for BlendCap pipeline")
+    parser = argparse.ArgumentParser(description="Convert source media to MP4 for OpenMocap pipeline")
     parser.add_argument("--video", help="Source video path (for video conversion/re-rate)")
     parser.add_argument("--image-dir", help="Image sequence directory")
     parser.add_argument("--elements-file", help="Text file listing image filenames in order (one per line)")

@@ -1,8 +1,8 @@
 # Preferences
 
-BlendCap's preferences can be found in **Edit ▸ Preferences ▸ Add-ons ▸ BlendCap**. They apply to your whole Blender install (not per-project), so you set them once. The quickest way there is the **Open Preferences** button in the Setup section of BlendCap's sidebar panel.
+OpenMocap's preferences can be found in **Edit ▸ Preferences ▸ Add-ons ▸ OpenMocap**. They apply to your whole Blender install (not per-project), so you set them once. The quickest way there is the **Open Preferences** button in the Setup section of OpenMocap's sidebar panel.
 
-![The BlendCap add-on preferences](images/22-preferences.png)
+![The OpenMocap add-on preferences](images/22-preferences.png)
 
 The preferences are grouped into four sections.
 
@@ -10,19 +10,19 @@ The preferences are grouped into four sections.
 
 ## AI Tracking Dependencies
 
-Manage the models and libraries BlendCap needs. When everything is installed, this section confirms it and lists what was detected (your GPU and the installed library versions), for reference and support questions.
+Manage the models and libraries OpenMocap needs. When everything is installed, this section confirms it and lists what was detected (your GPU and the installed library versions), for reference and support questions.
 
 | Control                  | What it does                                                                                                                                                                                                                            |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Install Dependencies** | Runs the one-time setup (see [Installation](03-installation.md)). Shows as **Reinstall Dependencies** once they're installed, re-run it after a GPU change or an interrupted install.                                                   |
-| **Open Install Folder**  | Opens the folder where BlendCap and its dependencies live on disk (the path is shown above the button).                                                                                                                                 |
+| **Open Install Folder**  | Opens the folder where OpenMocap and its dependencies live on disk (the path is shown above the button).                                                                                                                                 |
 | **Uninstall**            | Removes the bundled Python environment and downloaded AI models to free disk space (several GB). A confirmation appears first; Blender may freeze briefly while files are removed, and you'll need to reinstall before capturing again. |
 
 ---
 
 ## File & Cache Locations
 
-Choose where BlendCap stores its data (covered in [BVH Library & Cache](10-bvh-library-and-cache.md)).
+Choose where OpenMocap stores its data (covered in [BVH Library & Cache](10-bvh-library-and-cache.md)).
 
 | Control | What it does |
 |---|---|
@@ -63,11 +63,11 @@ Which hardware runs the body capture. **Automatic** suits almost everyone, it us
 
 ## Interface
 
-Tailor the BlendCap panels to your taste. Both toggles apply instantly.
+Tailor the OpenMocap panels to your taste. Both toggles apply instantly.
 
 | Control                               | What it does                                                                                                                                                                         |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Hide the Setup section**            | Hides the Setup box at the top of the sidebar panel once you're past first-time setup, and if you don't need the **Open Workspace** button.                                          |
 | **Hide the "Clear All" cache button** | Hides **Clear All** so the whole capture cache can't be wiped by accident, **Clear Cache** (current clip only) stays available. Useful when several projects share one cache folder. |
 
-This section also walks you through keeping the **BlendCap workspace** available in every new project: open the workspace once from the sidebar's Setup section, then use **File ▸ Defaults ▸ Save Startup File**. It's best done from a fresh project, since the startup file saves your entire scene. The section shows where the startup file lives (with an **Open Folder** button), and deleting that file reverts Blender to its default startup.
+This section also walks you through keeping the **OpenMocap workspace** available in every new project: open the workspace once from the sidebar's Setup section, then use **File ▸ Defaults ▸ Save Startup File**. It's best done from a fresh project, since the startup file saves your entire scene. The section shows where the startup file lives (with an **Open Folder** button), and deleting that file reverts Blender to its default startup.

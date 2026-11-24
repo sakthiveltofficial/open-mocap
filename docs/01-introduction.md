@@ -1,4 +1,4 @@
-# Welcome to the BlendCap documentation!
+# Welcome to the OpenMocap documentation!
 
 <div align="center">
   <img src="images/01-LogoOutline.png" width="350">
@@ -10,10 +10,10 @@ This guide covers everything from installing the add-on and its dependencies, to
 
 ## In this guide
 
-New to BlendCap? Work through **Getting started** in order, then dip into the other sections as you need them.
+New to OpenMocap? Work through **Getting started** in order, then dip into the other sections as you need them.
 
 **Getting started**
-- [System Requirements](02-system-requirements.md): what you need to run BlendCap.
+- [System Requirements](02-system-requirements.md): what you need to run OpenMocap.
 - [Installation](03-installation.md): install the add-on and set up its dependencies.
 - [Quick Start](04-quick-start.md): your first capture, from start to finish.
 
@@ -35,4 +35,4 @@ New to BlendCap? Work through **Getting started** in order, then dip into the ot
 
 ## Getting help
 
-If something isn't working, the [Troubleshooting & FAQ](12-troubleshooting-and-faq.md) covers the common cases. For anything else, reach out through the store you bought BlendCap from: use the contact or message option on the BlendCap product page (for example on Superhive or Gumroad).
+If something isn't working, the [Troubleshooting & FAQ](12-troubleshooting-and-faq.md) covers the common cases. For anything else, reach out through the store you bought OpenMocap from: use the contact or message option on the OpenMocap product page (for example on Superhive or Gumroad).

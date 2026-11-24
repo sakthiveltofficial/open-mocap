@@ -1,10 +1,10 @@
 {
-  "name": "BlendCap → Mixamo",
+  "name": "OpenMocap → Mixamo",
   "version": 1,
   "target_kind": "generic",
   "namespace_strip": "mixamorig:",
   "auto_bake_ik": false,
-  "_note": "BlendCap BVH → Mixamo. Source = BlendCap's exported BVH bone names (SAM 3D Body: Hips/Spine/.../LeftToe/Root). Target = this rig's actual bone names. Twist bones are not driven — target rig's twist setup (driver, constraint, or auto-twist) handles them from the FK rotation. namespace_strip is set to 'mixamorig:' so the map works on freshly-imported Mixamo FBXs (where bones come in as 'mixamorig:Hips' etc.) without manual renaming. Locomotion: Root→hips LOC XY + Hips→hips LOC Z, both composed per-axis onto the same hips bone (this rig's typical export carries all translation on the hips).",
+  "_note": "OpenMocap BVH → Mixamo. Source = OpenMocap's exported BVH bone names (SAM 3D Body: Hips/Spine/.../LeftToe/Root). Target = this rig's actual bone names. Twist bones are not driven — target rig's twist setup (driver, constraint, or auto-twist) handles them from the FK rotation. namespace_strip is set to 'mixamorig:' so the map works on freshly-imported Mixamo FBXs (where bones come in as 'mixamorig:Hips' etc.) without manual renaming. Locomotion: Root→hips LOC XY + Hips→hips LOC Z, both composed per-axis onto the same hips bone (this rig's typical export carries all translation on the hips).",
   "pairs": [
     {
       "source": "Head",

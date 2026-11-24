@@ -122,11 +122,11 @@ def _skew(axis):
     return np.array([[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]])
 
 
-# Escape hatch: BLENDCAP_HAND_SOLVER_SCIPY=1 restores the original
+# Escape hatch: OPENMOCAP_HAND_SOLVER_SCIPY=1 restores the original
 # scipy.optimize.least_squares fits (same problem, ~5x slower) in case
 # the hand-rolled solver ever misbehaves on someone's footage.
 import os as _os
-_USE_SCIPY = _os.environ.get("BLENDCAP_HAND_SOLVER_SCIPY", "0") == "1"
+_USE_SCIPY = _os.environ.get("OPENMOCAP_HAND_SOLVER_SCIPY", "0") == "1"
 
 
 def _lm_solve(fn, x0, lo, hi, max_iter=40):

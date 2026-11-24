@@ -13,9 +13,9 @@ import numpy as np
 
 
 def _progress(pct, msg):
-    """Emit a `[PROGRESS pct] msg` marker for the BlendCap addon to parse.
+    """Emit a `[PROGRESS pct] msg` marker for the OpenMocap addon to parse.
 
-    The Blender addon's run_bvh_thread (blendcap/mocap.py) reads stdout
+    The Blender addon's run_bvh_thread (openmocap/mocap.py) reads stdout
     line by line and feeds these into the in-panel progress bar.
     Stays useful in plain CLI runs too — just shows up as a print line.
     """
@@ -313,7 +313,7 @@ def _apply_camera_offset(args, export_mode, global_rots, joint_coords,
     R0_pre_correction snapshot returned here), so R0 (and the rest
     geometry derived from it) stays in the original raw orientation.
     This matches the per-rig live-preview path in
-    blendcap.properties._apply_camera_offset_to_rig (which only
+    openmocap.properties._apply_camera_offset_to_rig (which only
     rewrites Root's per-frame rotation keys, never touches rest) so
     baked and unbaked offsets are visually identical and retarget
     bakes see the same rest geometry either way."""

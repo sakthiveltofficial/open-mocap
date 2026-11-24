@@ -40,7 +40,7 @@ def main():
                         "pass-through.")
     p.add_argument("--face-refine",
                    choices=["off", "geometric", "full"],
-                   default=os.environ.get("BLENDCAP_FACE_REFINE", "full"),
+                   default=os.environ.get("OPENMOCAP_FACE_REFINE", "full"),
                    help="Recompute weak MediaPipe channels before "
                         "smoothing (see npz_to_bvh.py --face-refine). "
                         "Same default and env override.")

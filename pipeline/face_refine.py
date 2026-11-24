@@ -756,12 +756,12 @@ def apply_face_refine(face_data, mode=None, neutral_frame=-1,
     # with lit flesh (no dark cavity), which reads exactly like a
     # teeth-smile and force-closed the jaw during bleps — the tongue
     # then exited through the shut teeth. No UI toggle by design;
-    # BLENDCAP_FACE_TONGUE=0 is the support-case kill switch, same
-    # pattern as BLENDCAP_NO_ROCM.
-    if os.environ.get("BLENDCAP_FACE_TONGUE", "1").lower() \
+    # OPENMOCAP_FACE_TONGUE=0 is the support-case kill switch, same
+    # pattern as OPENMOCAP_NO_ROCM.
+    if os.environ.get("OPENMOCAP_FACE_TONGUE", "1").lower() \
             in ("0", "off", "false"):
         tongue, tongue_info = None, {"reason": "disabled via "
-                                               "BLENDCAP_FACE_TONGUE"}
+                                               "OPENMOCAP_FACE_TONGUE"}
     else:
         tongue, tongue_info = compute_tongue_out(
             face_data.get("mouth_stats"), inner_gap, detected, cfg)

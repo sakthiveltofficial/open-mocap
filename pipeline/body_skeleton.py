@@ -65,7 +65,7 @@ def load_skeleton(mhr_model_path):
 # retarget time (via `source_rest_override`, the same dict the live
 # 'Use Current Source Pose as Rest' toggle populates). Going through a
 # Blender↔BVH frame conversion was an avoidable source of bugs — see
-# `blendcap.operators_rest_pose` for the new save/apply path. Preset
+# `openmocap.operators_rest_pose` for the new save/apply path. Preset
 # JSON files saved by the legacy code are NOT compatible with the new
 # pipeline; users must re-pose and re-save once.
 
@@ -443,7 +443,7 @@ def prune_skeleton(parents, rest_pos, global_rots, R0, kept_order=None):
 # case: the importer has already baked .location curves in the
 # vertical-Y bone-local frame, and rotating the bone post-hoc rotates
 # those curves out of the ground plane (locomotion lands on Blender Z
-# instead of X/Y). See blendcap/helpers.py for the history.
+# instead of X/Y). See openmocap/helpers.py for the history.
 _ROOT_TAIL_FORWARD = np.array([0.0, 0.0, -0.30], dtype=np.float64)
 
 

@@ -1,5 +1,5 @@
 {
-  "name": "BlendCap → Rigify (Old)",
+  "name": "OpenMocap → Rigify (Old)",
   "version": 7,
   "target_kind": "rigify_control",
   "namespace_strip": "",

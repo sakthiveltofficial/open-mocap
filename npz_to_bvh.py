@@ -95,8 +95,8 @@ def _build_argparser():
                              "hands/root produce standalone armatures from "
                              "the body NPZ. template produces a 1-frame "
                              "T-pose body+hands armature with no input NPZ "
-                             "required — used by the BlendCap addon's "
-                             "'Import BlendCap Armature' button so users can "
+                             "required — used by the OpenMocap addon's "
+                             "'Import OpenMocap Armature' button so users can "
                              "pose it and save a custom rest-pose preset.")
     parser.add_argument("--output", default="output.bvh",
                         help="Output BVH file")
@@ -142,7 +142,7 @@ def _build_argparser():
                              "(centered convolution). 0 = off.")
     parser.add_argument("--face-refine",
                         choices=["off", "geometric", "full"],
-                        default=os.environ.get("BLENDCAP_FACE_REFINE",
+                        default=os.environ.get("OPENMOCAP_FACE_REFINE",
                                                "full"),
                         help="Recompute the blendshape channels "
                              "MediaPipe gets wrong (jawOpen from chin "
@@ -153,7 +153,7 @@ def _build_argparser():
                              "(default; falls back to geometric if the "
                              "baked basis is missing). off = raw "
                              "MediaPipe values. Env default: "
-                             "BLENDCAP_FACE_REFINE.")
+                             "OPENMOCAP_FACE_REFINE.")
     parser.add_argument("--face-neutral-frame", type=int, default=-1,
                         help="Frame index (into the face NPZ) to treat "
                              "as the actor's neutral face for --face-"
@@ -207,13 +207,13 @@ def _build_argparser():
                              "1.0 = no change (default).")
     parser.add_argument("--hand-solver",
                         choices=["off", "on"],
-                        default=os.environ.get("BLENDCAP_HAND_SOLVER",
+                        default=os.environ.get("OPENMOCAP_HAND_SOLVER",
                                                "off"),
                         help="Refit finger rotations to the tracked 2D "
                              "finger keypoints (experimental). Recovers "
                              "real articulation the 3D rotation output "
                              "dampens. When on, --finger-boost is "
-                             "skipped. Env override: BLENDCAP_HAND_SOLVER.")
+                             "skipped. Env override: OPENMOCAP_HAND_SOLVER.")
     parser.add_argument("--face-boost", type=float, default=1.0,
                         help="Scale face bone blendshape-driven position offsets. "
                              "Higher = more expressive face animation. "

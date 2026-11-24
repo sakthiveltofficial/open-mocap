@@ -1,20 +1,20 @@
 schema_version = "1.0.0"
 
-# Unique add-on id (lowercase). Becomes the module name bl_ext.<repo>.blendcap.
-id = "blendcap"
+# Unique add-on id (lowercase). Becomes the module name bl_ext.<repo>.openmocap.
+id = "openmocap"
 version = "1.0.5"
-name = "BlendCap"
+name = "OpenMocap"
 tagline = "Markerless video-to-BVH performance capture"
 maintainer = "Arcomade <arcomade@users.noreply.github.com>"
 type = "add-on"
 
-website = "https://github.com/Arcomade/BlendCap"
+website = "https://@@@"
 
-# First Blender version with the extension/manifest system. BlendCap's code
+# First Blender version with the extension/manifest system. OpenMocap's code
 # also uses Blender 5.x APIs with 4.3/4.4 fallbacks already in place.
 blender_version_min = "4.2.0"
 
-# BlendCap is GPL-3.0-or-later (forced by the always-on AGPL-3.0 YOLO11 dep;
+# OpenMocap is GPL-3.0-or-later (forced by the always-on AGPL-3.0 YOLO11 dep;
 # GPL v3 sec.13 bridges to AGPL). The bundled model weights and third-party
 # code ship under their own terms - full texts in LICENSE + NOTICE.txt at
 # the root and in licenses/.

@@ -12,7 +12,7 @@ import os
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 
 # ── Offline operation ─────────────────────────────────────────────
-# BlendCap runs fully offline after install. Force the model libraries into
+# OpenMocap runs fully offline after install. Force the model libraries into
 # offline mode so they NEVER make a network round-trip at capture time:
 #   - HF_HUB_OFFLINE / TRANSFORMERS_OFFLINE: no Hugging Face HEAD requests
 #     (MoGe weights load from the local cache only).
@@ -83,7 +83,7 @@ os.environ.setdefault(
     "DINOV3_HUB_DIR",
     str(SCRIPT_DIR / "models" / "dinov3_hub" / "facebookresearch_dinov3_main"),
 )
-os.environ.setdefault("BLENDCAP_MOGE_BASE", str(CKPT_DIR))
+os.environ.setdefault("OPENMOCAP_MOGE_BASE", str(CKPT_DIR))
 
 # Use the vendored Fast-SAM-3D-Body library in models/fast-sam-3d-body/.
 # Self-contained — works wherever the script lives, including after the
@@ -91,7 +91,7 @@ os.environ.setdefault("BLENDCAP_MOGE_BASE", str(CKPT_DIR))
 FAST_DIR = SCRIPT_DIR / "models" / "fast-sam-3d-body"
 if not FAST_DIR.exists():
     print(f"ERROR: Fast-SAM-3D-Body vendored library not found at {FAST_DIR}")
-    print("       The addon install looks incomplete - reinstall BlendCap.")
+    print("       The addon install looks incomplete - reinstall OpenMocap.")
     sys.exit(1)
 sys.path.insert(0, str(FAST_DIR))
 
@@ -143,7 +143,7 @@ def open_video(video_path):
 def _get_device():
     """Pick the best torch device for the TORCH side of the pipeline.
 
-    BLENDCAP_FORCE_CPU=1 overrides everything -> "cpu" (the CPU-only capture
+    OPENMOCAP_FORCE_CPU=1 overrides everything -> "cpu" (the CPU-only capture
     backend; the addon injects it into the subprocess env - see
     run_mocap_thread). Otherwise priority is CUDA > (DirectML detected -> CPU
     hybrid) > MPS > CPU. On a DirectML box we deliberately return "cpu", NOT
@@ -152,8 +152,8 @@ def _get_device():
     backbone stays on the GPU via ONNX Runtime (USE_ORT, which picks
     DmlExecutionProvider on its own). Returns a string in every case.
     """
-    if os.environ.get("BLENDCAP_FORCE_CPU", "0") == "1":
-        print("[save_mhr_data] BLENDCAP_FORCE_CPU=1 -> all torch on CPU "
+    if os.environ.get("OPENMOCAP_FORCE_CPU", "0") == "1":
+        print("[save_mhr_data] OPENMOCAP_FORCE_CPU=1 -> all torch on CPU "
               "(CPU-only capture backend).")
         return "cpu"
     if torch.cuda.is_available():
@@ -168,7 +168,7 @@ def _get_device():
             # incorrect." Route torch to CPU and keep ONLY the backbone on
             # DirectML via ONNX Runtime. The ORT backbone selects its EP
             # independently of the torch device, so this does NOT move it
-            # off the GPU. (Set BLENDCAP_ORT_CPU=1 to also force the backbone
+            # off the GPU. (Set OPENMOCAP_ORT_CPU=1 to also force the backbone
             # to CPU for a true full-CPU run.)
             print("[save_mhr_data] DirectML present -> torch on CPU; DINOv3 "
                   "backbone runs on DirectML via ONNX Runtime (USE_ORT).")
@@ -696,7 +696,7 @@ def main():
     try:
         _log_dir = Path(args.output).resolve().parent
         _log_dir.mkdir(parents=True, exist_ok=True)
-        _log_path = _log_dir / "blendcap_capture_debug.log"
+        _log_path = _log_dir / "openmocap_capture_debug.log"
         _log_fh = open(_log_path, "w", buffering=1, encoding="utf-8", errors="replace")
 
         class _Tee:
@@ -788,7 +788,7 @@ def main():
         print(f"  Manual focal {args.focal_mm:.1f}mm (35mm-equiv) -> cam_int "
               f"built ({_w}x{_h}); MoGe not used")
 
-    # [BlendCap subsampling] infer every (capture_skip+1)th frame; gaps are
+    # [OpenMocap subsampling] infer every (capture_skip+1)th frame; gaps are
     # interpolated after the loop so the NPZ stays dense. inference_type
     # 'body' (--no-hands) drops the per-frame hand backbone pass.
     step = max(1, args.capture_skip + 1)
@@ -883,7 +883,7 @@ def main():
     emit_progress(98, "Saving results")
     print(f"\nProcessed {n_good} frames ({skipped} skipped, {bbox_recovered} recovered via prev-bbox)")
 
-    # [WARNING] lines are parsed by the addon (blendcap/mocap.py) and
+    # [WARNING] lines are parsed by the addon (openmocap/mocap.py) and
     # surfaced in a popup after the run — single line, ASCII, short.
     total_attempted = n_good + skipped
     if total_attempted > 0 and skipped > total_attempted * 0.3:
@@ -893,7 +893,7 @@ def main():
     if n_good > 0 and multi_person_frames > n_good * 0.05:
         print("[WARNING] Multiple people in frame; tracked the most prominent")
 
-    # [BlendCap subsampling] fill the skipped frames so the NPZ stays dense
+    # [OpenMocap subsampling] fill the skipped frames so the NPZ stays dense
     # (one entry per frame); no-op when capture-skip is 0.
     if step > 1:
         accum, focal_lengths, frame_indices = _interpolate_subsampled(
@@ -907,7 +907,7 @@ def main():
     # from older builds don't have it) — never require it. Bump when a
     # field is renamed/reshaped so future readers can say "cache is
     # from an older version, re-capture" instead of raising KeyError.
-    arrays["blendcap_npz_version"] = np.array(1)
+    arrays["openmocap_npz_version"] = np.array(1)
     np.savez_compressed(args.output, **arrays)
 
     emit_progress(100, "Body tracking complete")

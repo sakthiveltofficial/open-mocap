@@ -4,7 +4,7 @@
   "target_kind": "generic",
   "namespace_strip": "",
   "auto_bake_ik": false,
-  "_note": "Body + hands mapping: transfer an already-animated Mixamo skeleton onto a CloudRig (Sintel-style) control rig. Built by joining mixamo_to_rigify.json (Mixamo source naming, spine offset, locomotion, custom_ik_sources, use_world_location) with blendcap_to_cloudrig.json (CloudRig FK targets + IK chains) through their shared Rigify bone correspondence. SPINE: Mixamo Hips drives the base spine (HIP-Spine ROT) + torso (TORSO-Spine LOC Z) + root (LOC XY); Mixamo Spine/Spine1 shift up into FK-Spine/FK-Chest. NO FACE: Mixamo capture carries no face data, so every CloudRig face pair is omitted — for face use the BlendCap-source blendcap_to_cloudrig.json preset.",
+  "_note": "Body + hands mapping: transfer an already-animated Mixamo skeleton onto a CloudRig (Sintel-style) control rig. Built by joining mixamo_to_rigify.json (Mixamo source naming, spine offset, locomotion, custom_ik_sources, use_world_location) with openmocap_to_cloudrig.json (CloudRig FK targets + IK chains) through their shared Rigify bone correspondence. SPINE: Mixamo Hips drives the base spine (HIP-Spine ROT) + torso (TORSO-Spine LOC Z) + root (LOC XY); Mixamo Spine/Spine1 shift up into FK-Spine/FK-Chest. NO FACE: Mixamo capture carries no face data, so every CloudRig face pair is omitted — for face use the OpenMocap-source openmocap_to_cloudrig.json preset.",
   "ik_chains": [
     {
       "limb_kind": "ARM",

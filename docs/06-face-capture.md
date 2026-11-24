@@ -1,6 +1,6 @@
 # Face Capture
 
-BlendCap can capture facial performances from the same kind of ordinary video as the body, no head rig or markers needed. The captured data can drive **ARKit-style shape keys** on a shape-keyed mesh, or **face bones** on a traditional face rig, and you can capture it together with the body for something easy and quick, or separately from a dedicated face performance video to get a more detailed result.
+OpenMocap can capture facial performances from the same kind of ordinary video as the body, no head rig or markers needed. The captured data can drive **ARKit-style shape keys** on a shape-keyed mesh, or **face bones** on a traditional face rig, and you can capture it together with the body for something easy and quick, or separately from a dedicated face performance video to get a more detailed result.
 
 ![A talking-head clip driving a character's face](images/15-face-hero.png)
 
@@ -24,7 +24,7 @@ For ideal facial capture the face should be **clearly visible, reasonably large 
 
 How you apply the captured face depends on how your character is set up:
 
-- **ARKit shape keys**: if your character's face is driven by ARKit-compatible shape keys (the standardized 52-blendshape set used across many tools and characters), BlendCap can keyframe them directly on your mesh. No armature or bone map needed.
+- **ARKit shape keys**: if your character's face is driven by ARKit-compatible shape keys (the standardized 52-blendshape set used across many tools and characters), OpenMocap can keyframe them directly on your mesh. No armature or bone map needed.
 - **Face bones**: for bone-based face rigs, the captured expression is included in the generated armature and retargeted onto your rig's face bones, the same way body motion is retargeted onto body bones.
 
 If your character supports both, the shape-key path usually gives the nicer result up-front, because the shapes are sculpted for that specific face, and shape keys are the values the tracker natively outputs, so nothing is lost in translation, but it's much less intuitive to clean up afterwards. The face bones BVH path pushes the same performance through a rig, and tends to lose a little bit of nuance, but is much easier to manually augment/clean up afterwards.
@@ -33,19 +33,19 @@ If your character supports both, the shape-key path usually gives the nicer resu
 
 ## Applying ARKit shape keys
 
-The **ARKit Shape Keys** section lives just below the **Retargeting** section of BlendCap's menu.
+The **ARKit Shape Keys** section lives just below the **Retargeting** section of OpenMocap's menu.
 
 1. Select the mesh object that carries your character's ARKit shape keys.
 2. Set **ARKit Face Data**. **Auto (active video)** uses the face capture that matches your currently selected video source; you can also pick any cached face capture from the list.
-3. Click **Apply ARKit Shape Keys**. BlendCap keyframes the matching shape keys across the clip and reports how many of the 52 ARKit shapes it found on your mesh. (The tuning sliders between the dropdown and the Apply button are covered in below in "Tuning the performance".)
+3. Click **Apply ARKit Shape Keys**. OpenMocap keyframes the matching shape keys across the clip and reports how many of the 52 ARKit shapes it found on your mesh. (The tuning sliders between the dropdown and the Apply button are covered in below in "Tuning the performance".)
 
 ![The ARKit Shape Keys section](images/15-2-arkit-shape-keys.png)
 
-> Your mesh needs shape keys with the standard ARKit names (`jawOpen`, `browInnerUp`, and so on) for BlendCap to find them. Most ARKit-ready characters use these names out of the box. If yours doesn't have them yet, [this free guide](https://pooyadeperson.com/the-ultimate-guide-to-creating-arkits-52-facial-blendshapes/) walks through creating all 52 shapes, and [Apple's reference](https://developer.apple.com/documentation/arkit/arfaceanchor/blendshapelocation) lists the exact names BlendCap matches.
+> Your mesh needs shape keys with the standard ARKit names (`jawOpen`, `browInnerUp`, and so on) for OpenMocap to find them. Most ARKit-ready characters use these names out of the box. If yours doesn't have them yet, [this free guide](https://pooyadeperson.com/the-ultimate-guide-to-creating-arkits-52-facial-blendshapes/) walks through creating all 52 shapes, and [Apple's reference](https://developer.apple.com/documentation/arkit/arfaceanchor/blendshapelocation) lists the exact names OpenMocap matches.
 
 ### Exporting to other programs
 
-**Save ARKit CSV**, the button just below **Apply**, writes the same weights to a **Live Link Face-style CSV** instead of keyframing them onto a mesh. Tools that read this format, such as Unreal Engine and MetaHuman, iClone, and various Unity plugins, can then drive a face from the capture directly. It runs the same smoothing, noise filtering and expression settings as Apply (covered in "Tuning the performance" below), and because it doesn't depend on a mesh, it always writes the full ARKit blendshape set rather than only the shapes your mesh happens to carry. Head and eye rotation columns are included for compatibility but left at zero, since BlendCap's face capture is expression only.
+**Save ARKit CSV**, the button just below **Apply**, writes the same weights to a **Live Link Face-style CSV** instead of keyframing them onto a mesh. Tools that read this format, such as Unreal Engine and MetaHuman, iClone, and various Unity plugins, can then drive a face from the capture directly. It runs the same smoothing, noise filtering and expression settings as Apply (covered in "Tuning the performance" below), and because it doesn't depend on a mesh, it always writes the full ARKit blendshape set rather than only the shapes your mesh happens to carry. Head and eye rotation columns are included for compatibility but left at zero, since OpenMocap's face capture is expression only.
 
 ---
 
@@ -82,7 +82,7 @@ If the clips aren't the same length, the shorter clip simply holds its last pose
 
 ## Tuning the performance
 
-Faces are expressive and personal, so BlendCap gives you tuning control over eight specific regions: **Jaw, Gaze, Eyelids, Brows, Lips, Cheeks, Nose and Tongue**. The same three controls, **Face Smoothing**, **Face Noise Filtering**, and **Face Expression** scaling, appear on whichever path you're using: the **BVH Post Processing** and **ARKit Shape Keys** versions are covered in [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md), and the retarget-time version under **Retargeting ▸ Advanced** in [Retargeting](09-retargeting.md).
+Faces are expressive and personal, so OpenMocap gives you tuning control over eight specific regions: **Jaw, Gaze, Eyelids, Brows, Lips, Cheeks, Nose and Tongue**. The same three controls, **Face Smoothing**, **Face Noise Filtering**, and **Face Expression** scaling, appear on whichever path you're using: the **BVH Post Processing** and **ARKit Shape Keys** versions are covered in [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md), and the retarget-time version under **Retargeting ▸ Advanced** in [Retargeting](09-retargeting.md).
 
 ![Combining body and face](images/15-5-FaceScaling.png)
 

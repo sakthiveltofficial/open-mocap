@@ -6,19 +6,19 @@ If something isn't working, start here. If you're still stuck, see [Getting help
 
 ## Frequently asked questions
 
-### Do I need an internet connection to use BlendCap?
+### Do I need an internet connection to use OpenMocap?
 Only **once**, during installation, to download the models (~11 GB). After that, **capture runs completely offline**: your footage never leaves your computer. (One exception: if you later switch the Capture Backend to **CPU Only** or **Non-NVIDIA**, the first capture on that backend fetches a one-time extra component when online.)
 
 ### What kind of video do I need?
 Ordinary video, a phone clip, a webcam recording, or existing footage. For best results: one person, fully in frame, decent even lighting, fairly steady camera. See [Filming Tips](13-filming-tips.md).
 
 ### Can I capture more than one person at once?
-BlendCap focuses on a **single subject** per capture and tracks the main person in frame (it warns you if it sees several). For multiple characters, capture each person's clip separately. Support for true multi-person-capture is currently planned as a feature for a future release, but is still under development.
+OpenMocap focuses on a **single subject** per capture and tracks the main person in frame (it warns you if it sees several). For multiple characters, capture each person's clip separately. Support for true multi-person-capture is currently planned as a feature for a future release, but is still under development.
 
 ### How long does a capture take?
 It depends on your GPU and the clip length. On a modern NVIDIA card it's roughly a third of a second per frame for the body; face capture is much lighter. The **CPU Only** backend should work on almost any machine but is much slower. Use **Capture Skip** to speed up captures in exchange for lower accuracy.
 
-### Does BlendCap work on macOS?
+### Does OpenMocap work on macOS?
 No, the paid build does not currently support macOS. See [System Requirements](02-system-requirements.md).
 
 ### Does it work without a GPU?
@@ -50,7 +50,7 @@ A downloaded model file didn't match its expected fingerprint, so setup stopped 
 On Linux the installer opens a **terminal window** so you can watch progress and approve system packages. If you don't see one, check for a terminal behind other windows, and make sure your system has a terminal application available.
 
 ### Flatpak Blender: install is blocked
-Flatpak runs Blender in a sandbox, so BlendCap needs a one-time permission to run its installer on the host. The install guide shows the exact command with a **Copy Command** button: run it in a terminal once, restart Blender, and try again. See [Installation](03-installation.md).
+Flatpak runs Blender in a sandbox, so OpenMocap needs a one-time permission to run its installer on the host. The install guide shows the exact command with a **Copy Command** button: run it in a terminal once, restart Blender, and try again. See [Installation](03-installation.md).
 
 ### Windows: a required tool is missing
 The installer fetches the few system tools it needs automatically. If your system can't do that, the installer tells you which component to install and where to get it. Install it and run the setup again.
@@ -66,16 +66,16 @@ Clicking a capture button before the one-time setup pops a dialog with an **Open
 The subject isn't being detected reliably. Improve framing (get the whole person in shot), lighting, and reduce occlusion (furniture, props, other people crossing). Re-run Preview until coverage is solid before doing a full capture. It may also be a false alarm. If you believe your footage is clean enough, try running a capture and see how it turns out.
 
 ### My GPU isn't recognized / capture runs on the wrong backend
-Check the detected-hardware line in **Preferences ▸ BlendCap ▸ AI Tracking Dependencies** (also shown under the Capture Backend dropdown). If you changed or upgraded your GPU after installing, run **Reinstall Dependencies** so BlendCap re-detects it. Confirm your card meets the [System Requirements](02-system-requirements.md) (NVIDIA RTX 20 / GTX 16 series or newer).
+Check the detected-hardware line in **Preferences ▸ OpenMocap ▸ AI Tracking Dependencies** (also shown under the Capture Backend dropdown). If you changed or upgraded your GPU after installing, run **Reinstall Dependencies** so OpenMocap re-detects it. Confirm your card meets the [System Requirements](02-system-requirements.md) (NVIDIA RTX 20 / GTX 16 series or newer).
 
 ### "Out of memory" during capture
 This usually means limited VRAM (under 6 GB). Close other GPU-heavy apps, try a shorter or lower-resolution clip, or switch the **Capture Backend** to **CPU Only**, much slower, but it can't run out of video memory.
 
 ### A capture failed with an error
-BlendCap shows the last lines of the capture's output when it fails. Note that message, it usually points at the cause (out of memory, a problem reading the video, and so on), and include it if you contact support.
+OpenMocap shows the last lines of the capture's output when it fails. Note that message, it usually points at the cause (out of memory, a problem reading the video, and so on), and include it if you contact support.
 
 ### A capture seems frozen
-The first-run model load can be silent for a couple of minutes; that's normal, and BlendCap never kills a capture that may still be working. If nothing has happened for over ten minutes, BlendCap adds a "Cancel if stuck" hint to the status, at that point, **Cancel** (it stops cleanly) and try again. A short clip is a good way to confirm the pipeline works.
+The first-run model load can be silent for a couple of minutes; that's normal, and OpenMocap never kills a capture that may still be working. If nothing has happened for over ten minutes, OpenMocap adds a "Cancel if stuck" hint to the status, at that point, **Cancel** (it stops cleanly) and try again. A short clip is a good way to confirm the pipeline works.
 
 ### I changed a setting but got the same result
 Capture settings re-capture automatically, and post-processing settings need a **Generate/Reload BVH** (or **Bake Settings to BVH**) to apply. If you still suspect a stale result, use **Clear Cache** on that clip and capture again (see [BVH Library & Cache](10-bvh-library-and-cache.md)).
@@ -90,7 +90,7 @@ Most often the **bone map doesn't match the rig**. Load the preset that matches 
 >For Rigify rigs, you may want to make sure "head follow" and "neck follow" are both set to "1.000" before retargeting so they have standard FK behavior and will avoid twisting artifacts.
 
 ### The IK looks off
-IK conversion reads from the FK result, so it must run **after** the FK retarget. Let BlendCap auto-convert (**Auto-bake IK on Apply**), or make sure you clicked **Apply Retargeting** first. Also check the **FK → IK Mapping** rows point at the right IK and pole controls.
+IK conversion reads from the FK result, so it must run **after** the FK retarget. Let OpenMocap auto-convert (**Auto-bake IK on Apply**), or make sure you clicked **Apply Retargeting** first. Also check the **FK → IK Mapping** rows point at the right IK and pole controls.
 
 ### The character floats, sinks, or the feet slide
 For poses on the floor (lying, rolling, crawling, kneeling), **Body Grounding** in BVH Post Processing does the seating and is on by default, so first check it's still enabled and that **Catch Distance** is large enough to reach your pose. For standing motion, use **Foot Locking**: for sliding, and for feet that float during holds and deep squats, raise **Sensitivity**; for brief pops, turn on **Bridge Phantom Lifts**. For a whole performance floating above the floor, or bobbing and drifting vertically (a moving camera does this), try **Feet Define the Floor** in Foot Locking Settings; if the level is still off, you can nudge **Height** in Camera Angle Offset, then **Bake Settings to BVH** to make it permanent. If the entire body is sliding around, you may need to turn off root motion and animation movement along the ground plane manually. See [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md). You may also want to make sure your capture had the FOV set to a constant value, or manually enter the camera's focal length. See [Capturing](05-capturing.md).
@@ -105,6 +105,6 @@ Check that the expressions were clearly performed and the face was well lit and 
 
 ## Getting help
 
-Reach out through the store you bought BlendCap from: use the contact or message option on the BlendCap product page (for example on Superhive or Gumroad).
+Reach out through the store you bought OpenMocap from: use the contact or message option on the OpenMocap product page (for example on Superhive or Gumroad).
 
-When reporting a problem, it helps a lot to include: your OS, GPU, Blender version, what you were doing, and any error message BlendCap showed.
+When reporting a problem, it helps a lot to include: your OS, GPU, Blender version, what you were doing, and any error message OpenMocap showed.

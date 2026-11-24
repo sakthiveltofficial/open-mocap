@@ -75,7 +75,7 @@ def _check_multi_face(count, warned, label=""):
     count += 1
     if not warned and count >= 3:
         print("\n  Multiple faces detected, or face tracking is flickering\n"
-              "  between frames. BlendCap is designed to track a single\n"
+              "  between frames. OpenMocap is designed to track a single\n"
               "  person; using IoU bbox continuity to pick one face\n"
               "  and consolidate flickering tracking.")
         print("[WARNING] Multi-face or flickering tracking; using IoU continuity.",
@@ -1385,7 +1385,7 @@ def run_inference(video_path, landmarker, output, body_data=None,
         # Schema version stamp — readers must tolerate its absence
         # (older caches lack it). Bump on any field rename/reshape.
         # v2: added mouth_stats.
-        blendcap_npz_version=np.array(2),
+        openmocap_npz_version=np.array(2),
     )
 
     print(f"\nSaved to {output}")

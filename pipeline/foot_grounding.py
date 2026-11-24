@@ -890,7 +890,7 @@ def compute_feet_defined_vertical(joint_coords, translation, fps,
                     any_plant[fc] = True
                     v[fc] = -float(jc_foot[fc, c_low])
                 n_inferred += 1
-                if os.environ.get("BLENDCAP_FDF_DEBUG"):
+                if os.environ.get("OPENMOCAP_FDF_DEBUG"):
                     print(f"       [FDF split] gap f={g0}..{g1}: "
                           f"inferred contact f={s0}..{s1} (dip "
                           f"{dip*100:.1f}cm at f={m}, peaks "
@@ -928,7 +928,7 @@ def compute_feet_defined_vertical(joint_coords, translation, fps,
         base = va + (vb - va) * ts
         ev = _gap_evidence(g0, g1, a, b, first, last)
         hang_sec = ev["hang_sec"]
-        if os.environ.get("BLENDCAP_FDF_DEBUG"):
+        if os.environ.get("OPENMOCAP_FDF_DEBUG"):
             print(f"       [FDF gap] f={g0}..{g1} hang={hang_sec:.2f}s "
                   f"apex={ev['apex_pred']*100:.0f}cm "
                   f"rise={ev['rise']*100:.1f}cm "
@@ -1024,7 +1024,7 @@ def compute_feet_defined_vertical(joint_coords, translation, fps,
                     stab[:-1] = (np.abs(np.diff(cs)) * fps
                                  <= FDF_STAND_SETTLE_SPEED)
                     okv = tilt_ok & stab
-                    if os.environ.get("BLENDCAP_FDF_DEBUG"):
+                    if os.environ.get("OPENMOCAP_FDF_DEBUG"):
                         for f2 in range(g0, g1 + 1, 2):
                             print(f"       [FDF stand] f={f2} "
                                   f"tilt_ok={bool(tilt_ok[f2])} "

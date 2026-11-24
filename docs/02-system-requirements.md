@@ -1,6 +1,6 @@
 # System Requirements
 
-BlendCap runs a fairly heavy pose estimation model locally on your machine, so the hardware matters more than it does for most add-ons. This page covers what BlendCap needs to run well, and what to expect on different hardware.
+OpenMocap runs a fairly heavy pose estimation model locally on your machine, so the hardware matters more than it does for most add-ons. This page covers what OpenMocap needs to run well, and what to expect on different hardware.
 
 ---
 
@@ -18,7 +18,7 @@ BlendCap runs a fairly heavy pose estimation model locally on your machine, so t
 
 ## Blender
 
-BlendCap is a Blender **extension** and requires **Blender 4.2 or newer**.
+OpenMocap is a Blender **extension** and requires **Blender 4.2 or newer**.
 
 ## Operating system
 
@@ -29,13 +29,13 @@ This is the primary, directly validated platform and the one with the strongest 
 Linux is supported, including both standard installs and **Flatpak** Blender. The one-click installer opens a terminal so you can watch the setup and approve the system packages it needs.
 
 ### macOS: not supported (paid build)
-The paid BlendCap build does **not** support macOS. Apple's notarization requirements and the lack of a supported GPU acceleration path make a reliable one-click Mac product impractical for now. (BlendCap's source is available under its open-source license for advanced Mac users who want to set it up manually, but this is unsupported and not recommended for most users.)
+The paid OpenMocap build does **not** support macOS. Apple's notarization requirements and the lack of a supported GPU acceleration path make a reliable one-click Mac product impractical for now. (OpenMocap's source is available under its open-source license for advanced Mac users who want to set it up manually, but this is unsupported and not recommended for most users.)
 
 ---
 
 ## Graphics card (GPU)
 
-BlendCap's body capture runs a large pose estimation model. A capable GPU is what makes capture practical rather than painfully slow.
+OpenMocap's body capture runs a large pose estimation model. A capable GPU is what makes capture practical rather than painfully slow.
 
 ### NVIDIA: recommended, fully supported
 - **Minimum architecture:** RTX 20-series / GTX 16-series, or newer (this is the "Turing" generation). Newer cards including the RTX 30, 40 and 50 series are supported.
@@ -54,7 +54,7 @@ A **CPU Only** capture mode is available as a universal fallback. It needs no GP
 
 ## Disk space
 
-The BlendCap download itself is small (around 2 MB). The first time you install its dependencies, it downloads roughly **11 GB** of models and supporting libraries. Allow **at least 32 GB of free space** on the drive where BlendCap is installed.
+The OpenMocap download itself is small (around 2 MB). The first time you install its dependencies, it downloads roughly **11 GB** of models and supporting libraries. Allow **at least 32 GB of free space** on the drive where OpenMocap is installed.
 
 ## Internet connection
 

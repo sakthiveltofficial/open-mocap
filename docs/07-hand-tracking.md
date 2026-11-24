@@ -1,6 +1,6 @@
 # Hand & Finger Tracking
 
-This page explains what tools are available in BlendCap to capture and refine hand and finger detail from your footage. Hands are captured together with the body, there is currently no separate hand-capture mode.
+This page explains what tools are available in OpenMocap to capture and refine hand and finger detail from your footage. Hands are captured together with the body, there is currently no separate hand-capture mode.
 
 ![Hand Tracking Hero Shot](images/24-hand-rebuild.png)
 

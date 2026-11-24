@@ -1,6 +1,6 @@
-# BlendCap Documentation
+# OpenMocap Documentation
 
-User documentation for BlendCap — markerless performance capture for Blender.
+User documentation for OpenMocap — markerless performance capture for Blender.
 
 New here? Start with the [Quick Start](04-quick-start.md).
 
@@ -8,7 +8,7 @@ New here? Start with the [Quick Start](04-quick-start.md).
 
 | # | Page | What it covers |
 |---|------|----------------|
-| 01 | [Introduction](01-introduction.md) | What BlendCap is, and how to get help |
+| 01 | [Introduction](01-introduction.md) | What OpenMocap is, and how to get help |
 | 02 | [System Requirements](02-system-requirements.md) | OS, GPU, VRAM, disk, internet |
 | 03 | [Installation](03-installation.md) | Installing the add-on and its dependencies |
 | 04 | [Quick Start](04-quick-start.md) | Your first capture, start to finish |

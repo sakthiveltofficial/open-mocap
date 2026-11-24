@@ -3,7 +3,7 @@
 # ONNX Runtime drop-in replacements for the heavy Fast-SAM-3D-Body
 # components. Used when USE_ORT=1 is set in save_mhr_data.py.
 #
-# Phase 3 of the BlendCap installer plan: cross-platform GPU support
+# Phase 3 of the OpenMocap installer plan: cross-platform GPU support
 # via ORT's execution provider abstraction. Same .onnx file runs on:
 #   NVIDIA Win/Linux  -> CUDAExecutionProvider   (tested)
 #   AMD Windows       -> DmlExecutionProvider    (untested, best-effort)
@@ -35,13 +35,13 @@ _EP_PRIORITY = [
 
 def select_providers(prefer: Optional[List[str]] = None) -> List[str]:
     """Return providers in install-priority order, filtered to what's available."""
-    # [BlendCap] Full-CPU escape hatch for memory-constrained / unstable GPUs
+    # [OpenMocap] Full-CPU escape hatch for memory-constrained / unstable GPUs
     # (e.g. shared-memory iGPUs that OOM-reboot under the DirectML backbone
-    # arena). BLENDCAP_ORT_CPU=1 forces every ORT session onto the CPU EP,
+    # arena). OPENMOCAP_ORT_CPU=1 forces every ORT session onto the CPU EP,
     # regardless of which GPU EPs are installed. Off by default; opt-in only.
     # This is the ORT half of a full-CPU run; the torch half is _get_device()
     # in save_mhr_data.py.
-    if os.environ.get("BLENDCAP_ORT_CPU", "0") == "1":
+    if os.environ.get("OPENMOCAP_ORT_CPU", "0") == "1":
         return ["CPUExecutionProvider"]
     import onnxruntime as ort
     available = set(ort.get_available_providers())

@@ -357,7 +357,7 @@ _FACE_SAVGOL_POLY = 3
 # Region -> ARKit blendshape names. Used for per-region dead-zone
 # denoising downstream of smoothing. Mirrors the same region set as
 # the legacy retarget face_denoise (jaw/gaze/lids/brows/lips/cheeks/
-# nose/tongue); duplicated in blendcap/operators_library.py for the
+# nose/tongue); duplicated in openmocap/operators_library.py for the
 # ARKit in-process path. tongue got its own region once tongueOut
 # became a live capture channel (pixel-detected at export time).
 ARKIT_REGION_BLENDSHAPES = {
