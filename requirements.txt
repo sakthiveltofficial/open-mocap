@@ -1,27 +1,25 @@
-# OpenMocap source-build dependencies (Python 3.12).
+# Open Mocap manual-build dependencies, Pro engine on NVIDIA (Python 3.12).
 #
-# These are the exact versions the supported (paid) installer validates
-# against. Building from source is possible but UNSUPPORTED — see
-# NOTICE.txt / licenses/ for the license terms that apply either way.
+# You normally don't need this file: installer/install.py sets up either
+# engine for you (see docs/03-installation.md). It is kept for people who
+# build the environment by hand.
+#
+#   Fast engine only:  mediapipe==0.10.32 opencv-python==4.13.0.92
+#                      numpy==2.4.3 scipy==1.17.1
+#   Pro engine:        everything below.
 #
 # The addon expects the environment at <addon root>/venv
 # (venv\Scripts\python.exe on Windows, venv/bin/python elsewhere).
 #
-# torch/torchvision/torchaudio MUST be the CUDA 12.8 (+cu128) builds for
-# NVIDIA: cu128 covers RTX 20-series (Turing) through RTX 50-series
-# (Blackwell). Default PyPI wheels will NOT run on RTX 50 cards — the
-# install looks fine, then capture fails with "no kernel image is
-# available". GTX 10-series (Pascal) and older are not supported.
-#
-# This file pins the supported NVIDIA / CUDA 12.8 path. Other GPU backends
-# (AMD ROCm on Linux, DirectML on Windows, Apple MPS) use different torch
-# builds from different indexes - see the optional-dependency extras in
-# installer/pyproject.toml rather than editing the torch lines below.
+# torch/torchvision MUST be the CUDA 12.8 (+cu128) builds for NVIDIA:
+# cu128 covers RTX 20-series (Turing) through RTX 50-series (Blackwell).
+# Default PyPI wheels will NOT run on RTX 50 cards. GTX 10-series (Pascal)
+# and older are not supported. For other hardware use the installer, which
+# picks the CPU / DirectML / MPS builds.
 --extra-index-url https://download.pytorch.org/whl/cu128
 
 torch==2.7.1+cu128
 torchvision==0.22.1+cu128
-torchaudio==2.11.0+cu128
 onnxruntime-gpu==1.26.0
 
 onnx==1.21.0
@@ -66,13 +64,12 @@ moge @ git+https://github.com/microsoft/MoGe.git@07444410f1e33f402353b99d6ccd26b
 #                                (HF Ruicheng/moge-2-vits-normal). Recommended:
 #                                without it body capture still runs, but camera /
 #                                focal estimation is less accurate.
-#   mediapipe/*.task, *.tflite   MediaPipe face/pose models, public. Downloaded
-#                                automatically from Google's CDN on the first FACE
-#                                capture if absent (needed for face capture only).
+#   mediapipe/*.task, *.tflite   MediaPipe pose/hand/face models, public (Google's
+#                                CDN). Needed by the Fast engine and face capture.
 #   onnx/*.onnx                  OPTIONAL — only the non-NVIDIA / ONNX Runtime path
 #                                reads these; the default NVIDIA / PyTorch path never
 #                                does. Public mirror:
-#                                https://@@@
+#                                https://huggingface.co/Blendcap/blendcap-onnx-exports
 #
 # A clean machine also needs system tools the supported installer bootstraps for
 # you but a manual build does not:

@@ -18,7 +18,7 @@ import textwrap
 
 from .openmocap import registration as _registration
 from .openmocap.helpers import (
-    _addon_dir, read_install_marker, is_dependencies_installed,
+    _addon_dir, read_install_marker, is_dependencies_installed, engine_installed,
     installer_files_present,
 )
 from .openmocap.operators_pipeline import draw_install_wizard
@@ -351,13 +351,17 @@ class OPENMOCAP_AddonPreferences(bpy.types.AddonPreferences):
         box.label(text="AI Tracking Dependencies", icon='CONSOLE')
 
         installed = is_dependencies_installed()
-        # The public GitHub repo is a source-availability artifact that
-        # ships WITHOUT the installer/ folder; the paid zips include it.
-        # Derive the UI from what's on disk so one codebase serves both
-        # channels (no forked builds).
         has_installer = installer_files_present()
         if installed:
             box.label(text="Dependencies installed.", icon='CHECKMARK')
+            eng = box.row()
+            eng.label(text="Fast engine (MediaPipe): " +
+                      ("ready" if engine_installed('FAST') else "not installed"),
+                      icon='CHECKMARK' if engine_installed('FAST') else 'X')
+            eng = box.row()
+            eng.label(text="Pro engine (SAM 3D Body): " +
+                      ("ready" if engine_installed('PRO') else "not installed"),
+                      icon='CHECKMARK' if engine_installed('PRO') else 'X')
             marker = read_install_marker() or {}
             details = []
             gpu = marker.get("gpu_description") or marker.get("gpu_type")
@@ -372,26 +376,23 @@ class OPENMOCAP_AddonPreferences(bpy.types.AddonPreferences):
             if has_installer:
                 row = box.row()
                 row.operator("openmocap.install_dependencies",
-                             text="Reinstall Dependencies",
+                             text="Add Engine / Reinstall",
                              icon='FILE_REFRESH').force = True
         elif not has_installer:
-            # Source distribution, nothing installed: there is no
-            # installer to launch. A hand-built venv at <root>/venv is
-            # picked up automatically (the `installed` branch above).
+            # installer/ missing (a partial copy): a hand-built venv at
+            # <root>/venv is still picked up by the `installed` branch above.
             col = box.column(align=True)
             _label_wrapped(
                 col, context,
-                "This is the source distribution - the one-click "
-                "dependency installer ships with the paid OpenMocap. "
-                "Running from source means building the Python "
-                "environment at venv/ and fetching the model weights "
-                "into checkpoints/ yourself (see requirements.txt; "
-                "unsupported).", icon='INFO')
+                "The installer/ folder is missing from this copy. Download "
+                "the full add-on from github.com/sakthiveltofficial/open-mocap, "
+                "or build venv/ yourself (see docs/02-installation.md).",
+                icon='INFO')
         else:
             col = box.column(align=True)
-            col.label(text="Not installed yet. This sets up the bundled Python")
-            col.label(text="environment and downloads the AI models (about 11 GB).")
-            col.label(text="You'll be shown the Meta SAM License to accept first.")
+            col.label(text="Not installed yet. Choose Fast (MediaPipe, about 150 MB,")
+            col.label(text="any CPU), Pro (SAM 3D Body, about 11 GB, NVIDIA GPU)")
+            col.label(text="or both. You can add the other engine later.")
             row = box.row()
             row.scale_y = 1.3
             row.operator("openmocap.install_dependencies",
