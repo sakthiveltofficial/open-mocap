@@ -15,7 +15,6 @@ In the **Video Source** section you tell OpenMocap where the footage is:
 - **File Path**: a video file somewhere on your computer. The simplest path, and all you need for a single clip. Point the field at the file and you're set.
 - **Video Editor Strip**: capture from the active strip in Blender's Video Sequencer. Use this when you want to edit footage before capturing, or work with more than one clip (see Working in the Sequencer below).
 
-![The Video Source section](images/12-capture-video-source.png)
 
 > **Sequencer render setting:** when you set the Video Source to **Video Editor Strip**, OpenMocap offers to turn off the Video Sequencer's render output so your capture footage doesn't show up in your final renders. You can change whether it asks, disables it automatically, or leaves it alone with the **Sequencer Render Warning** preference (see [Preferences](11-preferences.md)).
 
@@ -27,7 +26,6 @@ OpenMocap works best when the capture video's frame rate matches your scene's. I
 ### Working in the Sequencer
 Click **Open Workspace** in the **Setup** section to load OpenMocap's **Performance Capture** workspace: a ready-made layout with Blender's Video Sequencer and the 3D viewport set up side by side. OpenMocap's capturing tools are built around this workspace, so you will find everything you need for a capture available here. If you would like to have this workspace ready in every new project, you can save it into Blender's startup file (see [Preferences](11-preferences.md)).
 
-![Performance Capture Workspace](images/12-1-capture-workspace.png)
 
 With a clip on the timeline and **Video Editor Strip** chosen as the Video Source, OpenMocap captures from the **active strip**. The panel shows the active strip's name and frame range, or warns you when no strip is selected. Working this way adds a few things the plain File path can't:
 
@@ -35,6 +33,29 @@ With a clip on the timeline and **Video Editor Strip** chosen as the Video Sourc
 - **Work with separate body and face clips.** If you recorded the body and face performances as different clips, you can place both on the timeline and trim them to line up the performances before capturing. You don't need to match up head movement between them, the head comes entirely from the body clip.
 
 > **Proxy clips:** edits to a OpenMocap proxy strip don't carry back to the original. When the active strip is a proxy, the panel shows a **Revert to Original Video** button and a reminder, so revert first if you need to re-edit after running a capture.
+
+---
+
+## Capture engine: Fast or Pro
+
+Under **Body** in the Capture section, choose which engine tracks the body:
+
+| | **Fast (MediaPipe)** | **Pro (SAM 3D Body)** |
+|---|---|---|
+| Runs on | Any CPU | NVIDIA GPU recommended |
+| Speed | Near real time | About 3 frames per second on a modern GPU |
+| Strengths | Quick takes, webcams, laptops, Macs | Occlusion, unusual angles, loose clothing, best depth |
+| Hands | Re-detected on a crop around each wrist, full finger landmarks | Hand model refinement pass |
+| Field of view | Assumes a typical 28 mm (35 mm equivalent) lens unless you enter one | Estimated per clip with MoGe-2 |
+
+Both engines write the same skeleton, so a take captured with either one goes through the same BVH generation, cleanup and retargeting. Changing the engine invalidates the cached capture for that clip, so you can capture the same clip with both and compare.
+
+**Tips for the Fast engine**
+- Set **FOV Mode** to **Enter focal length** when you know the lens (phone main cameras are usually 24 to 28 mm equivalent). A wrong focal length mostly affects root depth, not the pose.
+- MediaPipe works best with the whole body in frame and the performer at least about a sixth of the frame height. Frames where the person is too small, half hidden, or missing are dropped and filled in.
+- Leading and trailing frames without a person are trimmed from the take.
+
+If the chosen engine isn't installed, the panel says so; install it from the add-on preferences (see [Installation](03-installation.md)).
 
 ---
 
@@ -47,7 +68,6 @@ The **Capture** section has two toggles:
 
 You can capture both together from one clip, or either on its own from separate clips. Hands always come with the body, capturing them from their own separate clip isn't supported yet, though it's being explored for a future release.
 
-![Body and Face capture toggles](images/13-capture-toggles.png)
 
 ---
 
@@ -59,7 +79,6 @@ You can capture both together from one clip, or either on its own from separate 
 - A **red marker** means no person/face was detected.
 - A few red markers don't necessarily mean the capture will fail. OpenMocap can often interpolate across the missing frames and still produce a clean animation.
 
-![A preview pass with detection boxes across the clip](images/13-1-preview-example.png)
 
 By default **Preview Skip** is set to 10, so it checks roughly one frame in ten. Raise it to scan faster (fewer frames), or lower it toward 0 to check more frames for a more accurate survey (at 0 it checks every frame). The more frames you check, the longer the preview will take to process.
 
@@ -76,7 +95,6 @@ These controls let you trade quality for speed, or adapt certain parameters to y
 ### FOV Mode (field of view)
 OpenMocap estimates the camera's field of view to place the subject's body correctly in depth. It's generally safe to leave this on the default **Sample first frame only**, but your capture results may call for a change. If the BVH armature glides toward and away from the camera for no reason, make sure the field of view is locked by sampling only the first frame (the default) or setting the focal length manually. If you notice quality drops in the body pose estimation, or your footage has lens zooms, sample every frame instead. You can then clean up the locomotion by hand in your final animation, or leave locomotion data out of the export entirely and animate the root bone yourself (see [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md)).
 
-![Capture quality and speed options](images/14-capture-options.png)
 
 - **Sample first frame only** (default): This will estimate once from the first frame, and assume the same FOV for the rest of the shot. Gives better locomotion results, but can sometimes degrade the body pose estimation.
 - **Sample every frame**: This will re-estimate the focal length for every frame in the video. Generally leads to the most accurate body poses, but less accurate locomotion. It's also slow on non-NVIDIA GPUs and CPU, so it's generally best to avoid it when running non-NVIDIA hardware.

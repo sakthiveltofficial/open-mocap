@@ -10,13 +10,11 @@ This page walks through one complete capture, from a video file to animation on 
 
 In the 3D Viewport, press **N** to open the sidebar and click the **OpenMocap** tab.
 
-![The OpenMocap sidebar tab](images/06-quickstart-sidebar.png)
 
 ## 2. Choose your video
 
 In the **Video Source** section, leave it on **File Path** and point OpenMocap at a video file on disk.
 
-![Selecting a video source](images/07-quickstart-video-source.png)
 
 >**Tips for a good first clip:** The video should only show one person, fully in frame, with reasonably good lighting, and a steady camera. See [Filming Tips](13-filming-tips.md) for more.
 >
@@ -35,11 +33,11 @@ In the **Capture** section, choose what to track:
 - **Body**: full body and hands.
 - **Face**: facial performance (can be combined with Body, or done on its own).
 
+With **Body** ticked, pick the engine: **Fast** (MediaPipe, runs on any CPU) or **Pro** (SAM 3D Body, best quality, NVIDIA GPU). If you're not sure, start with Fast. See [Capturing](05-capturing.md#capture-engine-fast-or-pro).
+
 Click **Run Capture**. OpenMocap processes the clip and loads a plane in the viewport showing the tracked 2D skeleton over your footage, so you can check the result before going further.
 
-![The Capture controls](images/08-quickstart-capture.png)
 
-![The Capture controls](images/08-1-capture-preview.png)
 
 Once you're done examining the capture results, you can safely hide or delete the preview plane to clear up your viewport.
 
@@ -47,7 +45,6 @@ Once you're done examining the capture results, you can safely hide or delete th
 
 Expand the **BVH Settings** section and click **Generate/Reload BVH**. OpenMocap converts the capture into an animated armature and imports it into your scene, ready to retarget.
 
-![Generating the BVH armature](images/09-quickstart-generate-bvh.png)
 
 Your captured motion is now ready to use. If anything looks off, you can refine it with the **BVH Post Processing** controls (see [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md)).
 
@@ -65,8 +62,6 @@ Now transfer the captured motion onto your character. In the **Retargeting** sec
 1. Set **Source** to the armature you just generated.
 2. Set **Target** to your character's rig (Rigify, Auto-Rig Pro, CloudRig, a Mixamo-style rig, or your own).
 
-![Choosing source and target rigs](images/10-quickstart-retarget-rigs.png)
-![Choosing source and target rigs](images/10-1-quickstart-retarget-rigs.png)
 
 ## 7. Load a bone map
 
@@ -75,7 +70,6 @@ OpenMocap needs to know which captured bone drives which bone on your rig. The e
 - **Choose a preset** that matches your rig type from the preset list, **or**
 - Click **Auto-Match** to let OpenMocap attempt to pair the bones automatically based on naming, or **Add All** to fill the map, and pair the bones manually.
 
-![Choosing source and target rigs](images/10-2-bone-map.png)
 
 You can fine-tune any pairing by hand, see [Retargeting](09-retargeting.md).
 
@@ -88,19 +82,16 @@ Retargeting is cleanest when the source armature and your character start from t
 
 This only sets what OpenMocap treats as the source's rest pose; it doesn't change your captured animation. See [Retargeting](09-retargeting.md) for more.
 
-![Matching the rest pose](images/10-3-quickstart-rest-pose.png)
 
 ## 9. Retarget
 
 Click the "Apply Retargeting" button. OpenMocap will transfer the motion onto your rig's FK controls. Once it's finished, scrub across the timeline and you should see your character performing the clip.
 
-![The character performing the captured motion](images/11-quickstart-result.png)
 
 ## 10. (Optional) Convert to IK
 
 If your rig includes IK arms and legs, OpenMocap can convert the FK motion to IK so you get clean foot and hand control for editing. If you used one of OpenMocap's bundled preset maps, just click **Convert FK → IK** and OpenMocap handles the conversion for you; otherwise you will need to set up the IK targets manually before converting. See [Retargeting](09-retargeting.md) for more details.
 
-![The character performing the captured motion](images/11-1-fk-ik-convert.png)
 
 ## 11. Polish to taste
 

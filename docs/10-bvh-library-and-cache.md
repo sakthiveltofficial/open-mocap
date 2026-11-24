@@ -13,7 +13,6 @@ Every armature you generate is saved as a **BVH file** in the library, and the *
 - **Save FBX** converts it to an FBX file, for game engines and other software that prefer FBX.
 - **Delete** removes it from the library (it asks you to confirm first).
 
-![The BVH Library section](images/21-bvh-library.png)
 
 By default the library lives in a `bvh_exports` folder inside the project's cache, and you can point it somewhere else, including one shared folder that several projects read from, with the **BVH library folder** preference (see below).
 
@@ -41,6 +40,5 @@ The **Capture** section gives you two cleanup buttons to help work around unexpe
 - **Clear Cache** removes the current clip's cached data, so its next capture runs fresh. Use it if you ever suspect a stale result.
 - **Clear All** removes every clip's cache in the project, reverts any capture strips in the Sequencer back to the original videos, and removes the preview overlays from the viewport, allowing you to start completely fresh.
 
-![The Capture controls](images/08-quickstart-capture.png)
 
 > Both are safe by design: they only ever delete inside the `OpenMocap_Cache` folder OpenMocap owns, and **your BVH Library is not affected**, finished takes stay. If you're worried about hitting **Clear All** by accident, you can hide the button in [Preferences](11-preferences.md).

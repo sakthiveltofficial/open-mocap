@@ -2,7 +2,6 @@
 
 This page explains what tools are available in OpenMocap to capture and refine hand and finger detail from your footage. Hands are captured together with the body, there is currently no separate hand-capture mode.
 
-![Hand Tracking Hero Shot](images/24-hand-rebuild.png)
 
 ---
 
@@ -22,13 +21,11 @@ Once you have your hand data captured, you have a few options to build on that d
 
 **Rebuild Finger Motion (Experimental)** (a toggle in **BVH Settings**, available when **Hands** is enabled) takes a different approach to the hands. It reconstructs each finger from the 2D tracked finger keypoints (the markers that you see in the overlay preview of your tracked footage) to recover distinct hand poses like a pointing finger or a counted "three". This almost completely replaces the default finger motion, and is not currently compatible with **Finger Curl Strength**.
 
-![Finger keypoints on the capture overlay](images/24-1-finger-overlay.png)
 
 **Rebuild Finger Motion** works best when the hand is reasonably large and clear in frame and roughly facing the camera. Frames where the hand is too small, blurred, or hidden fall back to the standard finger motion automatically, so it never makes those frames worse. Results are hard to predict and it struggles to reproduce certain poses and high levels of interaction, so give the results a look, and if Finger Curl Strength would leave you with less manual cleanup later, fall back to it instead.
 
 > Although the body needs to be visible in order to track the hands, you can get a lot closer than normal to squeeze some extra detail and accuracy out of the finger articulation. Combining these separate hand-detail shots with a full-body wide shot (the way a dedicated face clip can be combined with the body today) is being considered for a future update.
 
-![The Rebuild Finger Motion toggle and Finger Curl Strength slider](images/24-2-finger-controls.png)
 
 Like the other post-processing controls, this applies when the BVH is generated, so it works on clips you've already captured, no re-capture needed, but it does cost extra processing time, and can be slow on longer clips.
 

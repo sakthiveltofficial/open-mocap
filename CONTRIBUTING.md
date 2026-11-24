@@ -1,23 +1,33 @@
 # Contributing
 
-Thanks for your interest in OpenMocap.
+Thanks for your interest in Open Mocap. Issues and pull requests are welcome.
 
-OpenMocap is a commercial add-on, published here as open source to satisfy its license (GPL-3.0-or-later, which includes the AGPL-3.0 YOLO11 component). This repository exists so the source is available — it isn't an open community project, and it's maintained by one person alongside the paid product.
+## Reporting bugs
+
+Open an issue with:
+
+- your OS, Blender version, and GPU (if any),
+- the engine you used (Fast or Pro),
+- what you did and what happened,
+- the console output (Blender's system console shows the capture output) and, for install problems, `installer/install.log`.
+
+A short clip that reproduces a tracking problem helps a lot, if you can share one.
 
 ## Pull requests
 
-I'm not accepting external pull requests. Development happens privately and is published here with each release, so a PR against this repo can't be merged into that flow. Please don't spend your time on one — I'd rather you didn't waste the effort.
+1. Fork the repository and create a branch from `main`.
+2. Keep changes focused; one fix or feature per pull request.
+3. Test what you touched:
+   - capture code: run `save_mp_data.py` (or `save_mhr_data.py`) on a short clip and `npz_to_bvh.py` on the result,
+   - add-on code: enable the add-on in Blender 4.2 or newer and exercise the panel or operator.
+4. Describe what changed and how you tested it.
 
-You're welcome to fork and modify OpenMocap for your own use under the terms of the license.
+Both engines write the same NPZ layout and skeleton (see `pipeline/mp_skeleton.py` and `pipeline/body_skeleton.py`). Changes to one engine's output should keep that contract so presets and cleanup keep working for both.
 
-## Bugs, questions, and support
+## License
 
-* **If you bought OpenMocap:** support comes with your purchase. Message me through the product page you bought it from and include your OS, GPU, Blender version, and as much detail about the problem as you can. That's the fastest way to get help.
-* **Building from source yourself:** that path is advanced and unsupported by design (see the [README](README.md)) — you're on your own there.
+Open Mocap is GPL-3.0-or-later. By contributing you agree that your contribution is licensed under the same terms. Don't add model weights or other large binaries to the repository; the installer downloads models from their official sources.
 
 ## Security
 
-Please don't report security issues in public. Either use GitHub's private vulnerability reporting (the **Security** tab → **Report a vulnerability**, if enabled) or message me privately through the [store page](https://@@@). I'll get back to you as fast as I can.
-
-Thanks for understanding — keeping this simple is what lets me put the time into the product itself.
-
+Please don't report security issues in public. Use GitHub's private vulnerability reporting (the **Security** tab, **Report a vulnerability**).

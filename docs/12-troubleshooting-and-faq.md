@@ -16,13 +16,22 @@ Ordinary video, a phone clip, a webcam recording, or existing footage. For best 
 OpenMocap focuses on a **single subject** per capture and tracks the main person in frame (it warns you if it sees several). For multiple characters, capture each person's clip separately. Support for true multi-person-capture is currently planned as a feature for a future release, but is still under development.
 
 ### How long does a capture take?
-It depends on your GPU and the clip length. On a modern NVIDIA card it's roughly a third of a second per frame for the body; face capture is much lighter. The **CPU Only** backend should work on almost any machine but is much slower. Use **Capture Skip** to speed up captures in exchange for lower accuracy.
+With the **Fast** engine, a laptop CPU typically does 10 to 30 frames per second, hands included. With the **Pro** engine it depends on your GPU and the clip length: on a modern NVIDIA card it's roughly a third of a second per frame for the body, and the CPU path is much slower. Face capture is light either way. Use **Capture Skip** to speed up captures in exchange for lower accuracy.
 
-### Does OpenMocap work on macOS?
-No, the paid build does not currently support macOS. See [System Requirements](02-system-requirements.md).
+### Does Open Mocap work on macOS?
+Yes, with the **Fast** engine. Run `bash installer/install.sh --profile fast` once from Terminal in the add-on folder. The Pro engine is untested on macOS. See [System Requirements](02-system-requirements.md).
 
 ### Does it work without a GPU?
-There's a **CPU Only** capture backend that runs almost anywhere, but it's much slower than GPU capture.
+Yes. The **Fast** engine is built for the CPU. The **Pro** engine also has a **CPU Only** backend, but it's much slower than GPU capture.
+
+### Which engine should I use?
+Start with **Fast**. Switch a take to **Pro** when the performer is partly hidden, seen from an unusual angle, wearing loose clothing, or when you need the most accurate depth and hands, and you have an NVIDIA GPU.
+
+### The Pro engine download fails with a 401 / 403 error
+SAM 3D Body is gated by Meta. Make sure you accepted the license on [facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3) with the same account that created the token, and that the token has **read** access. Then reinstall with the token pasted in (or `HF_TOKEN=... bash installer/install.sh --profile pro`).
+
+### MediaPipe fails with "libEGL.so.1: cannot open shared object file" (Linux)
+Install the EGL/GLES runtime libraries, for example `sudo apt install libegl1 libgles2`, then capture again.
 
 ### What rigs does it support?
 Rigify, Auto-Rig Pro, CloudRig, Mixamo skeletons and Mixamo control rigs via the bundled presets, and most other/custom rigs via the bone-map editor. See [Retargeting](09-retargeting.md).
@@ -105,6 +114,6 @@ Check that the expressions were clearly performed and the face was well lit and 
 
 ## Getting help
 
-Reach out through the store you bought OpenMocap from: use the contact or message option on the OpenMocap product page (for example on Superhive or Gumroad).
+Open an issue on [GitHub](https://github.com/sakthiveltofficial/open-mocap/issues). The installer log is at `installer/install.log`, and Blender's system console shows the capture output.
 
 When reporting a problem, it helps a lot to include: your OS, GPU, Blender version, what you were doing, and any error message OpenMocap showed.

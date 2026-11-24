@@ -1,6 +1,6 @@
-# OpenMocap Documentation
+# Open Mocap Documentation
 
-User documentation for OpenMocap — markerless performance capture for Blender.
+User documentation for Open Mocap, free markerless motion capture for Blender with two capture engines (Fast: MediaPipe, Pro: SAM 3D Body).
 
 New here? Start with the [Quick Start](04-quick-start.md).
 
@@ -10,9 +10,9 @@ New here? Start with the [Quick Start](04-quick-start.md).
 |---|------|----------------|
 | 01 | [Introduction](01-introduction.md) | What OpenMocap is, and how to get help |
 | 02 | [System Requirements](02-system-requirements.md) | OS, GPU, VRAM, disk, internet |
-| 03 | [Installation](03-installation.md) | Installing the add-on and its dependencies |
+| 03 | [Installation](03-installation.md) | Installing the add-on and the Fast / Pro engines |
 | 04 | [Quick Start](04-quick-start.md) | Your first capture, start to finish |
-| 05 | [Capturing](05-capturing.md) | Video sources, capture settings, Preview, the cache |
+| 05 | [Capturing](05-capturing.md) | Video sources, Fast vs Pro engine, capture settings, Preview, the cache |
 | 06 | [Face Capture](06-face-capture.md) | Facial performance, ARKit shape keys, face bones, expression tuning |
 | 07 | [Hand & Finger Tracking](07-hand-tracking.md) | How fingers are tracked, and the controls that refine them |
 | 08 | [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md) | Generating the armature, then cleaning it up |

@@ -1,169 +1,162 @@
-
 <div align="center">
 
-<img src="assets/sh-banner-01-logo.jpg" alt="OpenMocap" width="720">
+# Open Mocap
 
-# OpenMocap
-
-### Markerless performance capture for Blender: video in, animation out.
+### Free, open-source markerless motion capture for Blender: video in, animation out.
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![Blender 4.2+](https://img.shields.io/badge/Blender-4.2%2B-orange.svg)](https://www.blender.org/)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)](#requirements)
-[![Get OpenMocap](https://img.shields.io/badge/Get%20OpenMocap-Buy%20now-brightgreen.svg)](#get-openmocap)
-
-<img src="assets/sh-banner-03-montage.webp" alt="OpenMocap turning ordinary video into character animation" width="720">
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](#requirements)
 
 </div>
 
 ---
 
-OpenMocap reconstructs a full **performance**, body, hands, and face, from an ordinary video and retargets it onto your Blender rig. No motion-capture suit, no markers, no special hardware, and no second camera. Record on a phone or use footage you already have.
+Open Mocap turns an ordinary video into a full **performance** (body, hands and face) and retargets it onto your Blender rig. No suit, no markers, no second camera. Record on a phone or a webcam, or use footage you already have.
 
-> ### About this repository
->
-> This is the **public source repository** for the OpenMocap add-on, published so the source is available as its license requires (OpenMocap is GPL-3.0-or-later and includes the AGPL-3.0 YOLO11 detector, see [Licensing](#licensing)).
->
-> **Most people want the [paid build](#get-openmocap)**: it adds the one-click dependency installer, bundled model access so the setup just works, updates, and support. Building from this source yourself is possible but **advanced and unsupported**, there are no install scripts here by design; the requirements and model sources are documented in [`requirements.txt`](requirements.txt).
+It ships with **two capture engines** that you switch between per take:
+
+| | **Fast** (MediaPipe) | **Pro** (SAM 3D Body) |
+|---|---|---|
+| Tracker | Google MediaPipe Pose + Hand landmarks | Meta SAM 3D Body + YOLO11 + MoGe-2 |
+| Hardware | Any CPU (laptops, Macs, no GPU needed) | NVIDIA GPU recommended (CPU / AMD / Intel work, slowly) |
+| Download | About 150 MB | About 11 GB |
+| Speed | Near real time on a laptop CPU | Slower, best on a GPU |
+| Quality | Good for most takes; weaker under heavy occlusion | Best: full 3D mesh recovery, robust to occlusion and odd angles |
+| Account | None | Free Hugging Face account to accept Meta's model license |
+
+Both engines write the **same skeleton**, so everything after capture is shared: cleanup, face capture, hand solving, BVH export, retarget presets, FK to IK, the BVH library. Start with Fast, add Pro later if you need it.
+
+> Open Mocap is based on **[BlendCap](https://github.com/Arcomade/BlendCap) by Arcomade** (GPL-3.0-or-later). The Pro engine, the post-processing pipeline, face capture and the retargeting system come from BlendCap; Open Mocap adds the MediaPipe Fast engine, a one-click installer for both engines and the engine switch. See [Credits](#credits).
 
 ---
 
 ## Contents
 
 - [Features](#features)
-- [See it in action](#see-it-in-action)
 - [Requirements](#requirements)
-- [Get OpenMocap](#get-openmocap)
+- [Install](#install)
+- [Quick start](#quick-start)
 - [Documentation](#documentation)
 - [How it works](#how-it-works)
-- [Roadmap](#roadmap)
 - [Licensing](#licensing)
-- [Acknowledgements](#acknowledgements)
+- [Credits](#credits)
 
 ---
 
 ## Features
 
+- **Two engines, one workflow**: Fast (MediaPipe, any CPU) and Pro (SAM 3D Body, GPU), switchable in the Capture panel.
 - **Single-camera, markerless capture**: full body **and** hands from one ordinary clip.
-- **Finger tracking**: both general hand shape tracking and full finger pose tracking, with dedicated controls to tune finger curl or rebuild the finger motion from the tracked keypoints.
-- **Facial performance capture**: drives ARKit-style shape keys and face bones, captured from the same clip or its own.
-- **Retarget onto your rig**: Rigify, Auto-Rig Pro, CloudRig, Mixamo and custom rigs, in both **FK and IK**, with included presets and a visual bone-map editor.
-- **Capture cleanup built in**: foot grounding and locking, depth-noise filtering, smoothing, tracking-failure repair, and per-take camera-angle correction.
-- **Runs fully offline** after setup, your footage never leaves your machine.
-- **GPU-accelerated** on NVIDIA, with AMD/Intel paths that install automatically but aren't hardware-validated yet, and a CPU-only fallback.
-
-## See it in action
-
-| Body capture | Face capture |
-|:---:|:---:|
-| <img src="assets/sh-11-hero.webp" width="380"> | <img src="assets/sh-13-face-combine.webp" width="380"> |
-| Ordinary clip → retargeted character | Face clip → facial animation, combined with the body |
-
-|                      Retargeting                      |                    Post-processing                     |
-| :---------------------------------------------------: | :----------------------------------------------------: |
-| <img src="assets/sh-14-retarget-ik.webp" width="380"> | <img src="assets/sh-15-foot-locking.webp" width="380"> |
-|     Finished motion transferred to any other rig      | The clip's full post-processing pass, before and after |
-
-|                 Finger tracking                 |          Combined body & face capture           |
-| :---------------------------------------------: | :---------------------------------------------: |
-| <img src="assets/sh-12-hands.webp" width="380"> | <img src="assets/18_00090262.webp" width="380"> |
-|            Full finger pose tracking            |     Separate body and face clips, combined      |
-
-> **Watch the feature demo:** [YouTube](https://www.youtube.com/watch?v=hOW8U1goY8g)
+- **Finger tracking**, with controls to tune finger curl or rebuild finger motion from tracked keypoints.
+- **Facial performance capture**: ARKit-style shape keys and face bones, from the same clip or a separate face clip.
+- **Retarget onto your rig**: Rigify, Auto-Rig Pro, CloudRig, Mixamo and custom rigs, in **FK and IK**, with included presets and a visual bone-map editor.
+- **Cleanup built in**: foot grounding and locking, footskate cleanup, depth-noise filtering, smoothing, tracking-failure repair, camera-angle correction.
+- **Preview and overlay videos** to check tracking before you commit to a long capture.
+- **BVH library**: keep, re-import and export takes as BVH or FBX.
+- **Runs fully offline** after setup. Your footage never leaves your machine.
 
 ## Requirements
 
 | | |
 |---|---|
 | **Blender** | 4.2 or newer |
-| **OS** | Windows 10/11 (fully supported) · Linux, including Flatpak Blender (supported) · macOS (not supported) |
-| **GPU** | NVIDIA RTX 20 / GTX 16 series or newer, 6 GB+ VRAM recommended. AMD/Intel paths install automatically but aren't hardware-validated yet; CPU-only fallback available (slow). |
-| **Disk / network** | ~32 GB free for models + dependencies; internet needed once for the ~11 GB setup download. Capture itself runs offline. |
+| **OS** | Windows 10/11, Linux (including Flatpak Blender), macOS (Fast engine; Pro runs on Apple Silicon via PyTorch MPS, untested) |
+| **Fast engine** | Any 64-bit CPU, about 1 GB free disk |
+| **Pro engine** | NVIDIA RTX 20 / GTX 16 series or newer with 6 GB+ VRAM recommended; about 32 GB free disk; `git` installed |
+| **Network** | Needed once for the install. Capture runs offline. |
 
-See the full [system requirements](#documentation) in the documentation for the GPU tiers and the CPU-only fallback.
+## Install
 
-## Get OpenMocap
+1. **Download the add-on.** On GitHub, click **Code > Download ZIP** (or grab a release zip).
+2. **Install it in Blender.** *Edit > Preferences > Add-ons*, open the menu in the top right and choose **Install from Disk...**, pick the zip, and enable **OpenMocap**.
+3. **Install the engines.** In the add-on preferences click **Install Dependencies**, pick **Fast**, **Pro** or **Both**, and follow the wizard. A console window opens and does the rest:
+   - fetches [uv](https://docs.astral.sh/uv/) (a small Python manager) if you don't have it,
+   - builds a private Python 3.12 environment in the add-on folder (`venv/`), separate from Blender's Python,
+   - downloads the models into `checkpoints/`.
+4. **Restart Blender** when the console says *Done*.
 
-The easiest way to use OpenMocap is the **paid build**: install it in Blender and click once. It handles everything to get you up and running quickly and effortlessly:
+**For the Pro engine** you also need a free Hugging Face account: open [facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3), accept Meta's license, create a **read** token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens), and paste it into the installer wizard. The token is only used for that download and is not saved.
 
-- One-click dependency installer (no terminal, no manual Python)
-- Bundled model access, so the ~11 GB setup just works
-- Updates and support
-- Validated on Windows and Linux with NVIDIA GPUs; AMD/Intel paths install automatically but aren't hardware-validated yet.
+**Prefer the terminal?** Run the installer directly from the add-on folder:
 
-<div align="center">
+```bash
+# Linux / macOS
+bash installer/install.sh --profile fast          # or: pro, both
+HF_TOKEN=hf_xxx bash installer/install.sh --profile pro
+```
 
-### → [**Get OpenMocap on Gumroad**][store-link] ←
-### → [**Also on Superhive (Blender Market)**][superhive-link] ←
+```powershell
+# Windows
+installer\install.bat --profile fast
+```
 
-</div>
+On macOS, Blender can't launch the installer for you (Gatekeeper), so use the terminal command above. Full details, manual setup and troubleshooting: [docs/03-installation.md](docs/03-installation.md).
 
-[store-link]: https://@@@
-[superhive-link]: https://superhivemarket.com/products/openmocap
+## Quick start
+
+1. Switch to the **Performance Capture** workspace (Setup section of the Open Mocap panel), or open the **OpenMocap** tab in the 3D viewport sidebar (N panel).
+2. Pick your video under **Video Source**.
+3. In **Capture**, tick **Body** (and **Face** if you want facial capture), choose the engine (**Fast** or **Pro**), and click **Run Preview** to check detection.
+4. Click **Run Capture**. Progress shows in the panel; an overlay video lets you check the tracking.
+5. In **BVH Settings**, choose what to include (body, hands, root motion, face) and click **Generate/Reload BVH**. The animated armature appears in the scene and is saved to the BVH library.
+6. In **Retargeting**, pick your rig as the target, choose a preset (Rigify, Auto-Rig Pro, CloudRig, Mixamo) or auto-match bone names, and click **Apply Retargeting**. Optionally convert to IK.
+
+The [quick start guide](docs/04-quick-start.md) walks through this with tips for each step.
 
 ## Documentation
 
-Full documentation, installation, a first-capture quick start, every setting, and filming tips, lives in [`docs/`](docs/) in this repository, start at the [table of contents](docs/README.md).
+Everything lives in [`docs/`](docs/): installation, quick start, every capture and post-processing setting, retargeting, the BVH library, preferences, troubleshooting and filming tips. Start at the [table of contents](docs/README.md).
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    V1[video] --> Y[person detection<br/>YOLO11] --> S[body + hands<br/>SAM 3D Body] --> BVH[BVH]
-    V2[video] --> M[face landmarks<br/>MediaPipe] --> AK[ARKit shape keys<br/>/ bones] --> BVH
-    BVH --> R[retarget onto your rig<br/>FK + IK]
+    V[video] --> E{engine}
+    E -- Fast --> MP[MediaPipe pose + hands<br/>save_mp_data.py] --> SK[skeleton solve<br/>pipeline/mp_skeleton.py]
+    E -- Pro --> Y[YOLO11 person detection] --> S[SAM 3D Body + MoGe<br/>save_mhr_data.py]
+    SK --> NPZ[body NPZ<br/>same layout for both]
+    S --> NPZ
+    V --> F[MediaPipe face<br/>save_face_data.py] --> NPZ2[face NPZ]
+    NPZ --> P[cleanup + BVH<br/>npz_to_bvh.py, pipeline/]
+    NPZ2 --> P
+    P --> R[retarget onto your rig<br/>FK + IK]
 ```
 
-OpenMocap runs Meta's **SAM 3D Body** (a 127-joint body+hand model with a **DINOv3** vision backbone, plus **MoGe** for camera field-of-view) to reconstruct the body, and **MediaPipe** for the face. Inference is accelerated by the **Fast-SAM-3D-Body** library on **PyTorch** / **ONNX Runtime**. The result is exported as a BVH and retargeted onto your character.
-
-Where it lives in the source: capture runs in [`save_mhr_data.py`](save_mhr_data.py) / [`save_face_data.py`](save_face_data.py); the post-processing passes (foot grounding, depth-noise filtering, hand solving, tracking-failure repair, face refinement) in [`pipeline/`](pipeline/); and the retargeting engine (FK bake, IK conversion, constraint simulation, bone-map matching) in [`openmocap/retarget/`](openmocap/retarget/).
-
-## Roadmap
-
-Directions actively being worked toward, not dated promises, priorities shift with feedback:
-
-**Planned**
-- **More rig presets** — ready-made bone maps for other popular rigs.
-- **Smarter auto-match** — better automatic bone matching in the map editor, so custom rigs won't need as much manual input.
-- **Multi-person capture** — track more than one performer in a shot and split them onto separate armatures.
-- **Resumable captures** — pause and continue a long capture, and recover a crashed run instead of starting it over from scratch.
-
-**Exploring**
-- **Remote GPU capture** — run capture on your own cloud GPU when you don't have a local NVIDIA card ("bring your own pod").
-- **Audio-assisted lip-sync** — use the clip's audio to sharpen mouth shapes during speech.
-- **Dedicated hand capture** — film the hands up close for finer finger detail and combine it with a wider body shot, the way separate face capture already works.
+- **Fast engine** ([`save_mp_data.py`](save_mp_data.py)): MediaPipe Pose (heavy) tracks 33 body landmarks in metric 3D; hands are re-detected on a crop around each wrist for full finger landmarks. [`pipeline/mp_skeleton.py`](pipeline/mp_skeleton.py) measures the performer's bone lengths, builds a T-pose skeleton with the same joint layout the Pro engine uses, solves every bone's rotation from the landmarks, and recovers the camera-space root position with a perspective solve. The result is written in the same NPZ format as the Pro engine.
+- **Pro engine** ([`save_mhr_data.py`](save_mhr_data.py)): BlendCap's pipeline. YOLO11 finds the person, Meta's SAM 3D Body (127-joint body and hand model on a DINOv3 backbone, accelerated by Fast-SAM-3D-Body) reconstructs the 3D pose, and MoGe-2 estimates the camera field of view.
+- **Shared pipeline** ([`npz_to_bvh.py`](npz_to_bvh.py), [`pipeline/`](pipeline/)): tracking repair, foot grounding and locking, footskate cleanup, depth denoise, smoothing, hand solving and face refinement, then BVH export. The skeleton is read from the capture file, so both engines produce the same bone names and every retarget preset works with either.
+- **Blender add-on** ([`openmocap/`](openmocap/)): UI, job runner, BVH import, BVH library and the retargeting engine (FK bake, IK conversion, bone-map matching).
 
 ## Licensing
 
-OpenMocap is licensed **GPL-3.0-or-later**. © 2026 Arcomade. See [`LICENSE`](LICENSE) and [`NOTICE.txt`](NOTICE.txt).
+Open Mocap is licensed **GPL-3.0-or-later**. See [`LICENSE`](LICENSE) and [`NOTICE.txt`](NOTICE.txt).
 
-Because OpenMocap includes the **AGPL-3.0** Ultralytics YOLO11 detector as a core, always-loaded component, the whole add-on is distributed under GPL v3 (which bridges to the AGPL component under section 13), which is why this source is, and must remain, public.
+It is a derivative of BlendCap by Arcomade, which is GPL-3.0-or-later; the original copyright notices are kept. The Pro engine includes the **AGPL-3.0** Ultralytics YOLO11 detector (GPL v3 section 13 allows the combination; the AGPL terms continue to apply to that component).
 
-Bundled / redistributed components keep their own licenses; full texts are in [`licenses/`](licenses/):
+Models and third-party components keep their own licenses (full texts in [`licenses/`](licenses/)). Model weights are **not** stored in this repository; the installer downloads them from their official sources.
 
-| Component | Role | License |
+| Component | Used by | License |
 |---|---|---|
-| Meta SAM 3D Body | Body + hand model | Meta SAM License |
-| Meta DINOv3 | Vision backbone | Meta DINOv3 License |
-| Ultralytics YOLO11 | Person detection | AGPL-3.0 |
-| Fast-SAM-3D-Body | Accelerated inference | MIT (over Meta-SAM code) |
-| MoGe (Microsoft) | Camera field-of-view | MIT (+ Apache-2.0 subcomponent) |
-| MediaPipe (Google) | Facial landmarks | Apache-2.0 |
-| ICT-FaceKit (USC ICT) | Face expression basis (derived data asset) | MIT |
-| PyTorch / ONNX Runtime | Runtimes | BSD-3-Clause / MIT |
+| MediaPipe (Google) | Fast engine, face capture | Apache-2.0 |
+| Meta SAM 3D Body | Pro engine | Meta SAM License |
+| Meta DINOv3 | Pro engine backbone | Meta DINOv3 License |
+| Ultralytics YOLO11 | Pro engine person detection | AGPL-3.0 |
+| Fast-SAM-3D-Body | Pro engine inference | MIT (over Meta-SAM code) |
+| MoGe (Microsoft) | Pro engine field of view | MIT (+ Apache-2.0 subcomponent) |
+| ICT-FaceKit (USC ICT) | Face expression basis | MIT |
+| PyTorch / ONNX Runtime | Pro engine runtimes | BSD-3-Clause / MIT |
 
-> The **animation you create** with OpenMocap is yours to use, including commercially. The SAM License permits commercial use royalty-free; you're responsible for having the rights to the footage you capture.
+> The **animation you create** is yours to use, including commercially. If you use the Pro engine, Meta's SAM License applies to the model (commercial use is allowed royalty-free, with some prohibited uses). You are responsible for having the rights to the footage you capture.
 
-## Acknowledgements
+## Credits
 
-OpenMocap stands on the work of these projects and the teams behind them:
-
-- [SAM 3D Body](https://github.com/facebookresearch/sam-3d-body) (Meta)
-- [DINOv3](https://github.com/facebookresearch/dinov3) (Meta)
+- **[BlendCap](https://github.com/Arcomade/BlendCap)** by **Arcomade**: the original add-on this project is built from (Pro engine, cleanup pipeline, face capture, retargeting, UI). If you find this useful, please consider supporting the original author too.
+- [MediaPipe](https://github.com/google-ai-edge/mediapipe) (Google)
+- [SAM 3D Body](https://github.com/facebookresearch/sam-3d-body) and [DINOv3](https://github.com/facebookresearch/dinov3) (Meta)
 - [Fast-SAM-3D-Body](https://github.com/yangtiming/Fast-SAM-3D-Body)
 - [YOLO11 / Ultralytics](https://github.com/ultralytics/ultralytics)
 - [MoGe](https://github.com/microsoft/MoGe) (Microsoft)
-- [MediaPipe](https://github.com/google-ai-edge/mediapipe) (Google)
 - [ICT-FaceKit](https://github.com/USC-ICT/ICT-FaceKit) (USC Institute for Creative Technologies)
-- [PyTorch](https://pytorch.org/) · [ONNX Runtime](https://onnxruntime.ai/)
-- …and [Blender](https://www.blender.org/) and its community.
+- [uv](https://github.com/astral-sh/uv) (Astral), [PyTorch](https://pytorch.org/), [ONNX Runtime](https://onnxruntime.ai/)
+- [Blender](https://www.blender.org/) and its community.

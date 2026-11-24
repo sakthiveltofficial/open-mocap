@@ -1,3 +1,10 @@
+Note (Open Mocap): this inventory is inherited unchanged from BlendCap
+1.0.5 by Arcomade, the project Open Mocap is based on. Where it says
+"BlendCap", read "Open Mocap". Open Mocap additionally uses the Google
+MediaPipe Pose and Hand Landmarker models (Apache-2.0) for its Fast
+engine and Astral's uv (MIT / Apache-2.0) in its installer. Model
+weights are not bundled; the installer downloads them.
+
 BlendCap — Third Party Notices
 ==============================
 

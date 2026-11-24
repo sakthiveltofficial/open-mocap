@@ -1,52 +1,101 @@
 # Installation
 
+Installing Open Mocap has two parts: the Blender add-on itself (a small zip), and the capture engines (a private Python environment plus the AI models), which the built-in installer sets up for you.
+
 ---
 
 ## Step 1: Install the add-on
 
-1. In Blender, open **Edit ▸ Preferences ▸ Get Extensions** (or **Add-ons**).
-2. Use **Install from Disk** and select the OpenMocap `.zip` file you downloaded.
+1. Download the add-on: on [GitHub](https://github.com/sakthiveltofficial/open-mocap), click **Code ▸ Download ZIP**, or download a release zip.
+2. In Blender, open **Edit ▸ Preferences ▸ Add-ons**, open the menu in the top-right corner and choose **Install from Disk**, then select the zip.
 3. Enable **OpenMocap** in the list if it isn't enabled automatically.
 
-![Installing the OpenMocap extension](images/02-install-extension.png)
-
-Once enabled, you'll find OpenMocap in the **3D Viewport sidebar** (press **N**) under the **OpenMocap** tab, as well as in the "**Output**" tab in the **Properties editor**.
+Once enabled, you'll find it in the **3D Viewport sidebar** (press **N**) under the **OpenMocap** tab, and in the **Output** tab of the Properties editor.
 
 ---
 
-## Step 2: Install the dependencies
+## Step 2: Install the capture engines
 
-The first time, OpenMocap needs to download the models and the libraries that run them (around **11 GB**). This is a one-time setup.
+1. Open **Edit ▸ Preferences ▸ Add-ons**, find **OpenMocap** and expand it. (The **Open Preferences** button in the **Setup** section of the sidebar panel takes you there.)
+2. Click **Install Dependencies**. An install guide appears inside the preferences panel.
+3. Choose what to install:
+   - **Fast (MediaPipe)**: about 150 MB, any CPU, no account needed.
+   - **Pro (SAM 3D Body)**: about 11 GB, NVIDIA GPU recommended.
+   - **Both**: install everything and switch per capture.
+4. **Pro only:** Meta's SAM 3D Body model is gated on Hugging Face.
+   1. Sign in (or sign up for free) at [huggingface.co](https://huggingface.co).
+   2. Open [facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3) and accept the license.
+   3. Create a **read** token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
+   4. Paste it into the **Hugging Face token** field. It is only passed to the installer for this download and is never saved.
+   5. On the next page, read and accept Meta's SAM License.
+5. Click **Install**. A console window opens and:
+   - fetches [uv](https://docs.astral.sh/uv/), a small standalone Python manager, if it isn't on your system,
+   - builds a private **Python 3.12** environment at `venv/` inside the add-on folder (Blender's own Python is not touched),
+   - installs the packages for the engine(s) you chose,
+   - downloads the models into `checkpoints/`.
+6. When the console says **Done**, restart Blender. The preferences show which engines are ready.
 
-1. If the Preferences window isn't already open, go to **Edit ▸ Preferences ▸ Add-ons**, find **OpenMocap**, and expand it. (You can also reach this faster with the **Open Preferences** button in the **Setup** section of OpenMocap's sidebar panel.)
-2. Click **Install Dependencies**.
-   ![The Install Dependencies button in add-on preferences](images/03-install-deps-button.png)
-
-3. An **install guide** appears, right inside the preferences panel. Read the intro, then review and **accept the model license** (Meta's SAM License), you need to scroll through it and tick the agreement box to continue.
-   ![Reviewing the model license](images/04-install-license.png)
-
-4. The next page lists the small system tools OpenMocap may install for you if they're missing (a package manager helper, Git, and on Windows the Microsoft Visual C++ runtime). Click **Install** to begin. If any of them need to be installed, your system may ask for permissions in order to install them.
-5. The installer opens a terminal window where you can watch its progress. It will alert you to any errors or extra instructions if needed.
-   ![Installation progress](images/05-install-progress.png)
-
-6. When it finishes, the terminal window will say "INSTALL COMPLETE" and OpenMocap will be ready to capture.
+You can add the other engine later: click **Add Engine / Reinstall** and pick it. Existing packages and models are reused.
 
 ### How long does it take?
-Mostly it depends on your internet speed, you're downloading about 11 GB. On a fast connection it's typically several minutes; on a slow one, longer. If the download is interrupted, just run it again, it resumes where it left off rather than starting over.
+Mostly it depends on your connection. The Fast engine is a couple of minutes. The Pro engine downloads about 11 GB. If a download is interrupted, run the installer again; finished files are skipped.
+
+---
+
+## Installing from a terminal
+
+Everything the wizard does is in `installer/`. From the add-on folder:
+
+```bash
+# Linux / macOS
+bash installer/install.sh --profile fast        # fast, pro or both
+HF_TOKEN=hf_xxx bash installer/install.sh --profile pro
+```
+
+```bat
+:: Windows (Command Prompt or double-click install.bat)
+set HF_TOKEN=hf_xxx
+installer\install.bat --profile both
+```
+
+Other options: `--fresh` rebuilds the environment from scratch, `--skip-onnx` skips the optional ONNX exports on non-NVIDIA machines. The installer logs to `installer/install.log` and records the result in `installer/install_marker.json`.
+
+If you already have [uv](https://docs.astral.sh/uv/) or any Python 3.8+, you can also run `python installer/install.py --profile fast` directly.
+
+### Where things go
+
+| Path (inside the add-on folder) | What |
+|---|---|
+| `venv/` | Private Python 3.12 environment used for capture |
+| `checkpoints/mediapipe/` | MediaPipe pose, hand and face models (Fast engine and face capture) |
+| `checkpoints/sam-3d-body-dinov3/` | SAM 3D Body checkpoint and MHR skeleton (Pro) |
+| `checkpoints/yolo/`, `checkpoints/moge-2-vits-normal/` | Person detector and field-of-view model (Pro) |
+| `checkpoints/onnx/` | Optional ONNX exports for the non-NVIDIA Pro path |
+
+### Model sources
+
+| Model | Source |
+|---|---|
+| MediaPipe Pose / Hand / Face landmarkers | `storage.googleapis.com/mediapipe-models` (Google) |
+| SAM 3D Body | [huggingface.co/facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3) (gated) |
+| YOLO11m-pose | [github.com/ultralytics/assets releases](https://github.com/ultralytics/assets/releases) |
+| MoGe-2 ViT-S | [huggingface.co/Ruicheng/moge-2-vits-normal](https://huggingface.co/Ruicheng/moge-2-vits-normal) |
+| ONNX exports (optional) | [huggingface.co/Blendcap/blendcap-onnx-exports](https://huggingface.co/Blendcap/blendcap-onnx-exports), published by Arcomade |
 
 ---
 
 ## Platform notes
 
 ### Windows
-The installer can set up everything a clean machine needs, it will fetch the few system tools it depends on automatically. You don't need Python or any developer tools installed beforehand. If a standard Microsoft component is missing, Windows asks for permissions once in order to install it.
-
-If a tool can't be fetched on your system, the installer tells you exactly which component to install and where to get it.
+Nothing needs to be installed beforehand. For the Pro engine, install [Git for Windows](https://git-scm.com/download/win) first (needed for the MoGe package). If PyTorch fails to import with `WinError 126`, install the [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist) (x64).
 
 ### Linux
-On Linux the installer opens a visible terminal so you can follow along. Installing some system tools may ask for your password (via `sudo`). Both standard and **Flatpak** Blender are supported.
+The installer opens a visible terminal. On minimal systems MediaPipe may need the EGL/GLES libraries (`sudo apt install libegl1 libgles2` on Debian/Ubuntu). Both standard and **Flatpak** Blender are supported.
 
-> **Flatpak Blender, one-time permission.** Because Flatpak runs Blender in a sandbox, OpenMocap needs permission to run its installer on the host system. If this permission is missing, the install guide shows the exact command to run, with a **Copy** button. Run it once, restart Blender, and you're set.
+> **Flatpak Blender, one-time permission.** Flatpak runs Blender in a sandbox, so Open Mocap needs permission to run its installer on the host. If it's missing, the install guide shows the exact command to run, with a **Copy** button. Run it once and restart Blender. Under Flatpak the Hugging Face token can't be passed through; run `hf auth login` on the host first, or install from a terminal.
+
+### macOS
+Run `bash installer/install.sh --profile fast` from Terminal in the add-on folder (Blender can't launch it for you because of Gatekeeper).
 
 ---
 
@@ -54,18 +103,15 @@ On Linux the installer opens a visible terminal so you can follow along. Install
 
 Both live in the OpenMocap section of **Add-on Preferences**:
 
-- **Reinstall Dependencies**: re-runs the dependency setup. Useful after a GPU change or if an install was interrupted.
-- **Uninstall**: removes the downloaded models and libraries to free up disk space. It asks you to confirm first. (This removes the dependencies, not the add-on itself, disable or remove the add-on through Blender's Add-ons list.)
-
-There's also an **Open Install Folder** button if you ever want to see where things live on disk.
+- **Add Engine / Reinstall**: re-runs the setup. Use it to add the other engine, after a GPU change, or if an install was interrupted.
+- **Uninstall**: removes the environment and downloaded models to free disk space, after you confirm. This doesn't remove the add-on itself.
+- **Open Install Folder** shows where everything lives on disk.
 
 ---
 
 ## Verifying the install
 
-The quickest way to confirm everything works:
-
 1. Load a short test video (see [Quick Start](04-quick-start.md)).
-2. Run a **Preview**: it should detect the person across the clip in a few seconds.
+2. Pick an engine and run **Preview**: it should find the person across the clip within seconds.
 
-If Preview finds your subject, your capture path is working. If anything goes wrong, see [Troubleshooting & FAQ](12-troubleshooting-and-faq.md).
+If Preview finds your subject, capture is working. Otherwise see [Troubleshooting & FAQ](12-troubleshooting-and-faq.md).

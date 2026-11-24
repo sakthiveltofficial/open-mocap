@@ -2,7 +2,6 @@
 
 OpenMocap can capture facial performances from the same kind of ordinary video as the body, no head rig or markers needed. The captured data can drive **ARKit-style shape keys** on a shape-keyed mesh, or **face bones** on a traditional face rig, and you can capture it together with the body for something easy and quick, or separately from a dedicated face performance video to get a more detailed result.
 
-![A talking-head clip driving a character's face](images/15-face-hero.png)
 
 ---
 
@@ -10,7 +9,6 @@ OpenMocap can capture facial performances from the same kind of ordinary video a
 
 In the **Capture** section, enable **Face**:
 
-![The Face toggle in the Capture section](images/15-1-face-checkbox.png)
 
 You can either capture **Face and Body simultaneously** from one clip, or capture the **Face on its own**, for example a close-up performance you'll combine with separate body motion (see Combining separate clips below).
 
@@ -39,7 +37,6 @@ The **ARKit Shape Keys** section lives just below the **Retargeting** section of
 2. Set **ARKit Face Data**. **Auto (active video)** uses the face capture that matches your currently selected video source; you can also pick any cached face capture from the list.
 3. Click **Apply ARKit Shape Keys**. OpenMocap keyframes the matching shape keys across the clip and reports how many of the 52 ARKit shapes it found on your mesh. (The tuning sliders between the dropdown and the Apply button are covered in below in "Tuning the performance".)
 
-![The ARKit Shape Keys section](images/15-2-arkit-shape-keys.png)
 
 > Your mesh needs shape keys with the standard ARKit names (`jawOpen`, `browInnerUp`, and so on) for OpenMocap to find them. Most ARKit-ready characters use these names out of the box. If yours doesn't have them yet, [this free guide](https://pooyadeperson.com/the-ultimate-guide-to-creating-arkits-52-facial-blendshapes/) walks through creating all 52 shapes, and [Apple's reference](https://developer.apple.com/documentation/arkit/arfaceanchor/blendshapelocation) lists the exact names OpenMocap matches.
 
@@ -55,7 +52,6 @@ For a bone-based face rig, first make sure your tracked face clip is selected in
 
 1. In **BVH Settings**, enable **Face** so the generated armature includes the facial motion, then **Generate/Reload BVH**.
 
-![Enabling Face in BVH Settings](images/15-3-face-bvh.png)
 
 2. Retarget as usual, the shipped presets for Rigify, Auto-Rig Pro and CloudRig include the face bone pairings for their default armature compositions.
 
@@ -72,7 +68,6 @@ If you recorded the body and the face as different clips (say, a wide shot for t
 1. Capture the body clip with **Body** enabled and the face clip with **Face** enabled, you only need to track one part per clip, so you can switch the other toggle off if you'd like to save processing time.
 2. With the body clip active, open **BVH Settings** and enable **Use Separate Face Data**, then pick the face capture from the dropdown.
 
-![Combining body and face](images/15-4-use-seperate-face.png)
 
 3. **Generate/Reload BVH**. The armature now carries the body from one clip and the face from the other.
 
@@ -84,11 +79,9 @@ If the clips aren't the same length, the shorter clip simply holds its last pose
 
 Faces are expressive and personal, so OpenMocap gives you tuning control over eight specific regions: **Jaw, Gaze, Eyelids, Brows, Lips, Cheeks, Nose and Tongue**. The same three controls, **Face Smoothing**, **Face Noise Filtering**, and **Face Expression** scaling, appear on whichever path you're using: the **BVH Post Processing** and **ARKit Shape Keys** versions are covered in [BVH Generation and Post-Processing](08-bvh-generation-and-post-processing.md), and the retarget-time version under **Retargeting ▸ Advanced** in [Retargeting](09-retargeting.md).
 
-![Combining body and face](images/15-5-FaceScaling.png)
 
 You'll find the same **Face Expression** sliders in a few places, and they don't all work the same way. The **BVH Post Processing** and **ARKit** sliders scale the captured expression itself, only the motion the capture read for that region. The **Retargeting** sliders scale the face bones instead, where the regions aren't cleanly separate, a bone can carry motion from its neighbors. So scaling a region there grows that borrowed motion too: turn up **Tongue** and you also scale the tongue movement that's really just the jaw opening. Use the BVH or ARKit sliders to adjust expression strength precisely, and the Retargeting sliders for more general adjustments.
 
-![Face Noise Filtering and Face Expression sliders](images/18-1-face-tuning.png)
 
 ---
 

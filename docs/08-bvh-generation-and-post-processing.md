@@ -17,7 +17,6 @@ The included toggles:
 - **Use Separate Face Data**: combine the selected clip's body with another clip's face capture (see [Face Capture](06-face-capture.md)).
 - **Rebuild Finger Motion (Experimental)**: reconstruct the fingers from their tracked keypoints instead of the default finger motion, recovering distinct poses like a point or a counted number. Available when **Hands** is enabled; covered in full in [Hand & Finger Tracking](07-hand-tracking.md).
 
-![The BVH Settings section](images/16-bvh-settings.png)
 
 > **How generated armatures are named.** Each armature (and its BVH file in the library) is named after its clip plus letters for what it contains: `B` body, `H` hands, `R` root motion, `F` face, so `walk_BHRF` is a full export of the clip "walk", and a separate face capture shows as `walk_BH-closeup_F`. Re-generating with the same toggles **replaces** that armature in the scene, and overwrites the previous iteration's data on disk, while changing the toggles creates a differently named armature **alongside** the old one.
 
@@ -36,7 +35,6 @@ Post-processing only changes how the capture is cleaned up, it never re-runs the
 
 Single-camera capture is never perfectly clean: feet slide and float, depth jitters, and the whole performance can come in tilted. These controls mitigate most of these issues without the need for manual cleanup.
 
-![The BVH Post Processing controls](images/16-1-post-processing-panel.png)
 
 ---
 
@@ -50,7 +48,6 @@ Sometimes a captured performance comes in tilted, the whole body leaning forward
 
 These sliders preview live on the selected armature; click **Bake Settings to BVH** to write them into the BVH file itself (which is what retargeting and exports read).
 
-![Straightening a tilted performance](images/17-camera-offset.png)
 
 > **Baking stacks.** Each bake adds the current slider values on top of what's already baked into that armature, and the sliders reset to zero afterward. One thing to know: if you re-import a clip from your library, OpenMocap can't read how much was previously baked into it, so the panel reminds you that the first bake on a re-imported armature starts fresh.
 
@@ -80,7 +77,6 @@ Usually the most valuable cleanup step: it detects when a foot is in contact wit
 
 - **Feet Define the Floor**: keeps the character on the ground plane while trying to conserve jumps. Feet in contact with the ground stay pinned to it. Helps with fixing floating captures or knees not bending enough. **Weaknesses**: if camera motion follows a jump this setting may not detect it properly, and feet dangling in the air during seated or hanging positions can be mistaken for standing or squatting. Furthermore, climbing onto elevated surfaces will not be properly detected while this setting is active. On by default, disable if your character is too stuck to the ground.
 
-![Feet Define Floor Fixes bad squat](images/18-1-feet-floor.png)
 
 - **Sensitivity**: how aggressively OpenMocap decides a foot is in contact with the ground. Higher values catch more contacts (good for footage with lots of held poses); lower is more conservative (good when there are lots of genuine quick steps). It's also the fix for floating feet: a contact that drifted off the floor can sit too high for the detector to recognize it as one, which is exactly what keeps it from being corrected, and a higher setting widens what counts so grounding can catch it and pull it back down.
 - **Max Gap**: any contacts closer together in time than this (in seconds) are merged into one continuous contact.
@@ -88,7 +84,6 @@ Usually the most valuable cleanup step: it detects when a foot is in contact wit
 - **Bridge Phantom Lifts**: bridges the gaps Max Gap can't: with this on, a contact can break for _any_ length of time and still be merged, as long as the foot stayed low and came back down in the same spot, a sign the tracker lost the contact rather than the foot really stepping. The **Recovery Lift** value sets how high the foot can rise while still being treated as one of these misreads.
 - **Pin Planted Feet**: once a contact is detected, this is what actually holds the foot still so it doesn't slide. It's on by default; turn it off to let the feet keep more of their original motion through a contact. **Pinning Strength** sets how firmly a planted foot holds its spot, lower values let some of the original movement through. **Release Distance** unpins a contact when the foot drifts farther than the set distance from where it planted; this allows you to free a genuine slide that was mistaken for a plant.
 
-![Foot locking fixes bad feet](images/18-foot-locking.png)
 
 ### Suggested starting points for example cases
 - **Lots of dynamic movement and held poses:** raise **Sensitivity** to about 0.75 and raise **Recovery Lift** under **Bridge Phantom Lifts** to about 30 cm.
@@ -123,7 +118,6 @@ Snaps very small movements to zero, per region, so a trembling jaw or flickering
 
 **Face Expression** scales the strength of the facial performance: **Strength** scales everything uniformly, or turn on **Use Per-Region** to push or pull each region independently, this lets you exaggerate the eye movement of a character with larger eyes, or soften the mouth movement of characters with a smaller jaw/mouth, or selectively tone down a performance that was exaggerated for tracking. Values above 1 amplify, below 1 soften. Generally looks best within the 0.5 - 1.5 range. **Tongue** is a length dial: capture reports a tongue-out at full strength, so this sets how far your character's tongue actually travels. On the BVH path, **Use Per-Region** ships on with tuned starting values for each region, so you're fine-tuning a sensible baseline rather than dialing in from scratch.
 
-![Face Noise Filtering and Face Expression sliders](images/18-1-face-tuning.png)
 
 > These bake into the exported BVH (and the ARKit versions into the keyed shape keys), so the cleaned-up, scaled result travels with the file into other programs.
 
