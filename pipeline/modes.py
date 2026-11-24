@@ -28,6 +28,7 @@ from .body_skeleton import (
     boost_finger_rotations,
     insert_synthetic_root,
     load_skeleton,
+    resolve_skeleton,
     prune_skeleton,
 )
 from .bvh_math import (
@@ -695,12 +696,9 @@ def run_body(args, export_mode, face_data, face_calibration):
       cam_t_present  bool — whether vertical/locomotion data was found
       face_bone_data dict|None — set in 'both' mode; used for the face-bone count
     """
-    if not os.path.isfile(args.mhr_model):
-        print(f"ERROR: {args.mhr_model} not found")
-        sys.exit(1)
-
     _progress(2, "Loading body skeleton")
-    parents, offsets_cm, prerot_quats = load_skeleton(args.mhr_model)
+    parents, offsets_cm, prerot_quats = resolve_skeleton(
+        None if export_mode == "template" else args.input, args.mhr_model)
     n_joints = len(parents)
 
     if export_mode == "template":
@@ -825,7 +823,7 @@ def run_body(args, export_mode, face_data, face_calibration):
         floor_override_y = 0.0
     else:
         vert_translation = translation
-        if "floor_y" in npz.files and cam_t is not None:
+        if npz is not None and "floor_y" in npz.files and cam_t is not None:
             # A measured floor level (two-camera merge writes one) beats
             # the classic lowest-frame rule, which lets a single
             # downward foot glitch define the floor and float the whole
@@ -1259,14 +1257,10 @@ def run_face(args, face_data, face_calibration):
 
 def run_hands(args):
     """Standalone hands-only export (Root + 2 hands + fingers)."""
-    if not os.path.isfile(args.mhr_model):
-        print(f"ERROR: {args.mhr_model} not found")
-        sys.exit(1)
-
     _progress(10, "Loading body skeleton + NPZ")
     print("[1/3] Loading body skeleton + NPZ for hands extraction")
-    body_parents, body_offsets_cm, prerot_quats = load_skeleton(
-        args.mhr_model)
+    body_parents, body_offsets_cm, prerot_quats = resolve_skeleton(
+        args.input, args.mhr_model)
 
     if prerot_quats is None:
         print("ERROR: Hands export requires T-pose prerotations in model")

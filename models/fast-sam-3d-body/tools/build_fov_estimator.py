@@ -138,7 +138,8 @@ def load_moge(device, path="", half=True, use_trt=False):
     # installer pre-fetches model.pt there. MoGeModel.from_pretrained() loads a
     # local file path directly (no network) when the path exists.
     # [BlendCap offline patch — keep when re-vendoring the Fast lib.]
-    _base = os.environ.get("BLENDCAP_MOGE_BASE", "")
+    _base = (os.environ.get("OPENMOCAP_MOGE_BASE", "")
+             or os.environ.get("BLENDCAP_MOGE_BASE", ""))
     if _base and isinstance(path, str) and "/" in path:
         _local_pt = os.path.join(_base, path.split("/")[-1], "model.pt")
         if os.path.isfile(_local_pt):

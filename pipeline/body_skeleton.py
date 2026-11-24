@@ -6,8 +6,9 @@
 
 import sys
 
+import os
+
 import numpy as np
-import torch
 
 from .bvh_math import (
     compute_local_rotations,
@@ -25,6 +26,7 @@ from .bvh_math import (
 def load_skeleton(mhr_model_path):
     """Extract joint parents, rest-pose offsets, and prerotations from TorchScript model."""
     print(f"[1/3] Loading skeleton from {mhr_model_path}")
+    import torch  # lazy: the Fast (MediaPipe) engine never needs torch
     model = torch.jit.load(mhr_model_path, map_location="cpu")
 
     parents = offsets = prerotations = None
@@ -56,6 +58,34 @@ def load_skeleton(mhr_model_path):
         print("       WARNING: No prerotations found, T-pose mode unavailable")
 
     return parents, offsets, prerotations
+
+
+def resolve_skeleton(npz_path, mhr_model_path):
+    """Pick the skeleton source for a capture.
+
+    1. A skeleton embedded in the capture NPZ (skel_parents / skel_offsets_cm
+       / skel_prerot), written by the Fast engine (save_mp_data.py) with the
+       subject's measured bone lengths.
+    2. The SAM 3D Body TorchScript model (Pro engine).
+    3. The built-in template skeleton (no model files at all).
+    """
+    if npz_path and os.path.isfile(npz_path):
+        try:
+            with np.load(npz_path, allow_pickle=False) as d:
+                if "skel_parents" in d.files:
+                    parents = d["skel_parents"].astype(np.int32)
+                    offsets = d["skel_offsets_cm"].astype(np.float64)
+                    prerot = d["skel_prerot"].astype(np.float64)
+                    print(f"[1/3] Using skeleton embedded in {os.path.basename(npz_path)}"
+                          f" ({len(parents)} joints)")
+                    return parents, offsets, prerot
+        except Exception as e:
+            print(f"       (could not read embedded skeleton: {e})")
+    if mhr_model_path and os.path.isfile(mhr_model_path):
+        return load_skeleton(mhr_model_path)
+    from .mp_skeleton import default_skeleton
+    print("[1/3] Using built-in template skeleton")
+    return default_skeleton()
 
 
 # NOTE: a previous version of this file shipped an `apply_rest_pose_preset`

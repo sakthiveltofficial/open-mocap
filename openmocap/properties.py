@@ -1398,6 +1398,15 @@ class OpenMocapProperties(bpy.types.PropertyGroup):
     preview_step: bpy.props.IntProperty(name="Preview Skip",
         description="How many frames to skip between checked preview frames (0 = check every frame; higher is faster but less thorough)",
         default=10, min=0, max=100)
+    capture_engine: bpy.props.EnumProperty(name="Engine",
+        description="Which body tracker runs the capture. Both write the same skeleton, so retargeting, presets and cleanup work the same way",
+        items=[
+            ('FAST', "Fast (MediaPipe)",
+             "Google MediaPipe pose and hand landmarks. Runs on any CPU, small download, near real time"),
+            ('PRO', "Pro (SAM 3D Body)",
+             "Meta SAM 3D Body full 3D mesh recovery. Best quality and occlusion handling; NVIDIA GPU recommended, large download"),
+        ],
+        default='FAST')
     capture_skip: bpy.props.IntProperty(name="Capture Skip", default=0, min=0, max=30,
         description="How many frames to skip during capture, interpolated afterward (0 = every frame; higher is faster but rougher)")
     fov_mode: bpy.props.EnumProperty(name="FOV Mode",

@@ -10,14 +10,15 @@ import bpy
 from .helpers import (
     openmocap_state, bvh_state, retarget_progress_state, arkit_state,
     _strip_visible_start, _strip_visible_end, addon_prefs,
-    is_paid_build, _active_video_strip,
+    is_paid_build, _active_video_strip, engine_installed,
 )
 
 # Channel detection lives in helpers.is_paid_build (shared with the
 # prefs panel's installer checks so the two can never drift). Evaluated
 # once at addon registration; editable by hand if a build ever needs to
 # force it either way.
-SHOW_DONATE_BUTTON = not is_paid_build()
+# Open Mocap has no donation channel; the button and toggle stay hidden.
+SHOW_DONATE_BUTTON = False
 
 
 def _source_rig_has_recognized_face_bones(src_rig):
@@ -183,6 +184,15 @@ def _draw_capture_section(layout, context, props, is_running, hide_clear_all):
         row = box.row()
         row.prop(props, "track_body", text="Body")
         row.prop(props, "track_face", text="Face")
+
+        eng = box.row(align=True)
+        eng.enabled = props.track_body
+        eng.prop(props, "capture_engine", expand=True)
+        if props.track_body and not engine_installed(props.capture_engine):
+            box.label(text=("Pro engine not installed (Preferences > Install)"
+                            if props.capture_engine == 'PRO'
+                            else "Fast engine not installed (Preferences > Install)"),
+                      icon='ERROR')
 
         # FOV / camera field-of-view (body tracking only). Plain dropdown.
         fov_col = box.column(align=True)

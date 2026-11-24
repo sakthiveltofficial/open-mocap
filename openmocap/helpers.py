@@ -451,11 +451,7 @@ def _host_spawn_ok(force=False):
 
 
 def _installer_dir():
-    """Folder holding install.ps1 / install.bat / install.sh.
-
-    Only present in PAID artifacts — the public GitHub source
-    distribution ships the addon without it (see
-    installer_files_present below)."""
+    """Folder holding install.py and its launchers (install.sh / .bat / .ps1)."""
     return os.path.join(_addon_dir(), "installer")
 
 
@@ -484,26 +480,35 @@ def installer_files_present():
             or os.path.isfile(os.path.join(d, "install.sh")))
 
 
-def is_paid_build():
-    """True for PAID artifacts, False for the public GitHub source.
-    Drives the Donate / Support button —
-    paying customers shouldn't be asked to donate; self-builders running
-    from the repo are exactly the donate audience.
+def engine_installed(engine):
+    """True when the capture engine's models and packages are on disk.
 
-    Detection keys off a difference that already MUST exist between the
-    channels, so packaging needs no remember-to-flip step: paid zips
-    ship the installer/ folder (install scripts + download_models.py,
-    and _offline_stash/ on offline bundles), while the public GitHub
-    repo deliberately has no installer/ at all -> False -> button
-    shows. No token sniffing — the model mirrors are public and no
-    credential ships anywhere. Any unexpected read failure likewise
-    defaults to False (the harmless direction). Note this makes the
-    dev working tree read as paid (it has installer/), which just
-    hides the donate button there — harmless."""
+    FAST: the MediaPipe pose + hand .task models. PRO: the SAM 3D Body
+    checkpoint (with its MHR skeleton). Both also need the venv."""
+    if not is_dependencies_installed():
+        return False
+    ck = os.path.join(_addon_dir(), "checkpoints")
+    if engine == 'PRO':
+        sam = os.path.join(ck, "sam-3d-body-dinov3")
+        return (os.path.isfile(os.path.join(sam, "assets", "mhr_model.pt"))
+                and os.path.isfile(os.path.join(sam, "model.ckpt")))
+    mp = os.path.join(ck, "mediapipe")
+    return (os.path.isfile(os.path.join(mp, "hand_landmarker.task"))
+            and any(os.path.isfile(os.path.join(mp, f)) for f in
+                    ("pose_landmarker_heavy.task", "pose_landmarker_full.task")))
+
+
+def capture_script(engine):
+    """Body capture script for an engine (same CLI for both)."""
+    return "save_mhr_data.py" if engine == 'PRO' else "save_mp_data.py"
+
+
+def is_paid_build():
+    """Kept for compatibility with BlendCap's donate-button logic. Open Mocap
+    has a single free channel, so this simply reports whether the full
+    installer is present."""
     try:
-        inst = _installer_dir()
-        return (os.path.isfile(os.path.join(inst, "download_models.py"))
-                or os.path.isdir(os.path.join(inst, "_offline_stash")))
+        return os.path.isfile(os.path.join(_installer_dir(), "install.py"))
     except Exception:
         return False
 

@@ -27,7 +27,7 @@ from .helpers import (
     _installer_dir, _install_marker_path, _license_path,
     _host_spawn_prefix, _host_spawn_ok, _host_spawn_grant_cmd, _in_flatpak,
     _subprocess_env,
-    read_install_marker, is_dependencies_installed,
+    read_install_marker, is_dependencies_installed, engine_installed, capture_script,
     addon_prefs, _tag_redraw, _terminate_state_process,
 )
 from .mocap import (
@@ -293,22 +293,35 @@ _INSTALL_FREE_SPACE_GB = 32
 
 
 # --- inline wizard page bodies ---------------------------------------------
-def _wizard_intro(layout):
-    layout.label(text="Install AI Tracking Dependencies", icon='CONSOLE')
+def _wizard_intro(layout, wm=None):
+    layout.label(text="Install Capture Engines", icon='CONSOLE')
     layout.separator()
     col = layout.column(align=True)
     for line in (
-        "OpenMocap's tracking runs on a bundled, isolated Python",
-        "environment plus a set of AI models (SAM 3D Body and",
-        "supporting networks). This one-time setup will:",
-        "",
-        "    1. Build the bundled Python environment.",
-        f"    2. Download the AI models (about {_INSTALL_DOWNLOAD_GB} GB).",
-        "",
-        "You'll need a working internet connection, a compatible GPU,",
-        f"and at least {_INSTALL_FREE_SPACE_GB} GB of free disk space.",
+        "Open Mocap's tracking runs in its own isolated Python",
+        "environment with AI models. Pick which engine(s) to set up:",
     ):
         col.label(text=line)
+    if wm is not None:
+        layout.prop(wm, "openmocap_install_profile", expand=True)
+        prof = wm.openmocap_install_profile
+    else:
+        prof = 'FAST'
+    info = layout.column(align=True)
+    if prof in ('FAST', 'BOTH'):
+        info.label(text="Fast: Google MediaPipe. Runs on any CPU, about 150 MB,", icon='CHECKMARK')
+        info.label(text="       no account needed. Great for quick takes and webcams.")
+    if prof in ('PRO', 'BOTH'):
+        info.label(text="Pro: Meta SAM 3D Body + YOLO11 + MoGe-2. Best quality,", icon='CHECKMARK')
+        info.label(text=f"       about {_INSTALL_DOWNLOAD_GB} GB, NVIDIA GPU recommended.")
+        info.label(text="       Needs a free Hugging Face account: accept Meta's license")
+        info.label(text="       on huggingface.co/facebook/sam-3d-body-dinov3 and paste")
+        info.label(text="       a read token below.")
+        layout.prop(wm, "openmocap_install_hf_token")
+
+
+def _wizard_needs_license(wm):
+    return getattr(wm, "openmocap_install_profile", 'FAST') in ('PRO', 'BOTH')
 
 
 def _wizard_license(context, layout):
@@ -331,34 +344,30 @@ def _wizard_license(context, layout):
     layout.prop(wm, "openmocap_install_agreed")
 
 
-def _wizard_confirm(layout, verb):
+def _wizard_confirm(layout, verb, wm=None):
+    prof = getattr(wm, "openmocap_install_profile", 'FAST') if wm else 'FAST'
     layout.label(text=f"Ready to {verb}", icon='IMPORT')
     layout.separator()
     col = layout.column(align=True)
     lines = [
         f"Press {verb} to open a separate console window and:",
         "",
-        "    - Build the bundled Python environment.",
-        "    - Download the SAM 3D Body model and supporting",
-        f"      AI models (about {_INSTALL_DOWNLOAD_GB} GB - needs internet).",
-        "",
-        "If they aren't already on your system, it also fetches",
-        "these:",
-        "    - uv (the Python environment manager)",
-        "    - Git (used to fetch some components)",
+        "    - Fetch uv (a small Python manager) if you don't have it.",
+        "    - Build a private Python 3.12 environment for Open Mocap.",
     ]
-    # The VC++ Redistributable is a Windows-only system component, and
-    # the ONLY tool whose install needs permissions (uv and Git arrive
-    # as portable app-local copies).
-    if sys.platform == "win32":
-        lines.append("    - Microsoft Visual C++ Redistributable")
-        lines.append("      (if missing, Windows asks for permissions")
-        lines.append("      in order to install it)")
+    if prof in ('FAST', 'BOTH'):
+        lines.append("    - Install MediaPipe and download its models (~150 MB).")
+    if prof in ('PRO', 'BOTH'):
+        lines.append("    - Install PyTorch and download SAM 3D Body, YOLO11")
+        lines.append(f"      and MoGe-2 (about {_INSTALL_DOWNLOAD_GB} GB). Needs git.")
+        if sys.platform == "win32":
+            lines.append("    - Torch needs the Microsoft Visual C++ Redistributable;")
+            lines.append("      install it from Microsoft if import errors appear.")
     lines += [
         "",
-        f"You'll need at least {_INSTALL_FREE_SPACE_GB} GB of free disk space.",
-        "The first run can take a while. You can keep using Blender;",
-        "OpenMocap reports when it's ready.",
+        ("You'll need at least %d GB of free disk space." %
+         (_INSTALL_FREE_SPACE_GB if prof != 'FAST' else 1)),
+        "You can keep using Blender while it runs.",
     ]
     for line in lines:
         col.label(text=line)
@@ -423,9 +432,9 @@ def draw_install_wizard(context, layout):
     if page == 'LICENSE':
         _wizard_license(context, box)
     elif page == 'CONFIRM':
-        _wizard_confirm(box, verb)
+        _wizard_confirm(box, verb, wm)
     else:
-        _wizard_intro(box)
+        _wizard_intro(box, wm)
 
     box.separator()
     footer = box.row(align=True)
@@ -437,12 +446,15 @@ def draw_install_wizard(context, layout):
         footer.prop_enum(wm, "openmocap_install_page", 'INTRO',
                          text="Back", icon='BACK')
     elif page == 'CONFIRM':
-        footer.prop_enum(wm, "openmocap_install_page", 'LICENSE',
+        footer.prop_enum(wm, "openmocap_install_page",
+                         'LICENSE' if _wizard_needs_license(wm) else 'INTRO',
                          text="Back", icon='BACK')
     # Forward — far right.
     fwd = footer.row(align=True)
     if page == 'INTRO':
-        fwd.prop_enum(wm, "openmocap_install_page", 'LICENSE',
+        # The Meta SAM license gate only applies to the Pro engine.
+        fwd.prop_enum(wm, "openmocap_install_page",
+                      'LICENSE' if _wizard_needs_license(wm) else 'CONFIRM',
                       text="Continue", icon='FORWARD')
     elif page == 'LICENSE':
         # Greyed until the agree box is ticked — the hard license gate.
@@ -521,6 +533,40 @@ class OPENMOCAP_OT_install_run(bpy.types.Operator):
         if not os.path.exists(launcher):
             self.report({'ERROR'}, f"Installer not found: {launcher}")
             return {'CANCELLED'}
+        wm = context.window_manager
+        profile = getattr(wm, "openmocap_install_profile", 'FAST').lower()
+        if profile != 'fast' and not getattr(wm, "openmocap_install_agreed", False):
+            self.report({'ERROR'}, "Accept the Meta SAM License to install the Pro engine.")
+            return {'CANCELLED'}
+        # install.py reads the chosen engines from this file (works for every
+        # launch path, including double-clicking install.bat later).
+        try:
+            with open(os.path.join(installer_dir, "requested_profile.txt"), "w",
+                      encoding="utf-8") as f:
+                f.write(profile)
+        except OSError as e:
+            self.report({'ERROR'}, f"Installer folder is not writable: {e}")
+            return {'CANCELLED'}
+        # The Hugging Face token rides the environment of the launched
+        # process only; it is removed from Blender's env right after launch
+        # and never written to disk by the add-on.
+        token = getattr(wm, "openmocap_install_hf_token", "").strip()
+        prev_token = os.environ.get("HF_TOKEN")
+        if token:
+            os.environ["HF_TOKEN"] = token
+        os.environ["OPENMOCAP_INSTALL_PROFILE"] = profile
+        try:
+            return self._launch(context, installer_dir, launcher)
+        finally:
+            os.environ.pop("OPENMOCAP_INSTALL_PROFILE", None)
+            if token:
+                if prev_token is None:
+                    os.environ.pop("HF_TOKEN", None)
+                else:
+                    os.environ["HF_TOKEN"] = prev_token
+            wm.openmocap_install_hf_token = ""
+
+    def _launch(self, context, installer_dir, launcher):
 
         # Under Flatpak the installer runs on the host via flatpak-spawn;
         # without the one-time grant it fails silently (portal error). Block
@@ -607,8 +653,8 @@ class OPENMOCAP_OT_install_run(bpy.types.Operator):
         wm.openmocap_install_page = 'INTRO'
         _tag_redraw('PREFERENCES')
         self.report({'INFO'},
-                    "Installer launched in a new window. First run downloads "
-                    "several GB and can take a while.")
+                    "Installer launched in a new window. Restart Blender when "
+                    "it says Done.")
         return {'FINISHED'}
 
 
@@ -779,7 +825,7 @@ class OPENMOCAP_OT_append_workspace(bpy.types.Operator):
         "Motion Capture",
         "MoCap",
         "Mocap",
-        "OpenMocap",
+        "Open Mocap",
         "OpenMocap",
         "Capture",
     )
@@ -1101,6 +1147,15 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
         if not props.track_body and not props.track_face:
             self.report({'ERROR'}, "Enable at least one tracking type (Body or Face).")
             return {'CANCELLED'}
+        _eng = getattr(props, "capture_engine", 'FAST')
+        if props.track_body and not engine_installed(_eng):
+            other = 'FAST' if _eng == 'PRO' else 'PRO'
+            hint = (" or switch to the %s engine" % ("Fast" if other == 'FAST' else "Pro")
+                    if engine_installed(other) else "")
+            self.report({'ERROR'}, "The %s engine is not installed. Run the installer in "
+                        "Preferences > Add-ons > Open Mocap%s." % (
+                            "Pro (SAM 3D Body)" if _eng == 'PRO' else "Fast (MediaPipe)", hint))
+            return {'CANCELLED'}
 
         # Resolve video source
         resolved = _resolve_video_path(context)
@@ -1361,20 +1416,29 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
         # variable crashed the Preview button with an UnboundLocalError.
         _ap = addon_prefs(context)
         _hr = getattr(_ap, "refine_hands", 'AUTO') if _ap else 'AUTO'
-        _cap_ort = _capture_use_ort_override(context)
-        _cap_cpu = _capture_force_cpu(context)
+        engine = getattr(props, "capture_engine", 'FAST')
+        body_script = capture_script(engine)
+        if engine == 'PRO':
+            _cap_ort = _capture_use_ort_override(context)
+            _cap_cpu = _capture_force_cpu(context)
+        else:
+            # MediaPipe runs on the CPU everywhere; the torch/ORT backend
+            # levers only apply to the Pro engine.
+            _cap_ort, _cap_cpu = None, False
         _non_nvidia = bool(_cap_cpu or _cap_ort == "1")
         if _hr == 'ON':
             capture_no_hands = False
         elif _hr == 'OFF':
             capture_no_hands = True
+        elif engine == 'FAST':
+            capture_no_hands = False  # MediaPipe hand crops are cheap
         else:  # AUTO: refine on NVIDIA, skip on non-NVIDIA / CPU
             capture_no_hands = _non_nvidia
         # Legacy scenes saved with the removed 'AUTO' item resolve to the
         # enum default ('FIRST') when Blender reads the property.
         capture_fov = props.fov_mode
         _focal = f"{props.fov_focal_mm:.4f}" if capture_fov == 'MANUAL' else "-"
-        capture_sig = (f"nh={int(capture_no_hands)};fov={capture_fov};"
+        capture_sig = (f"eng={engine};nh={int(capture_no_hands)};fov={capture_fov};"
                        f"focal={_focal};skip={props.capture_skip};"
                        f"ort={_cap_ort};cpu={int(bool(_cap_cpu))}")
 
@@ -1392,7 +1456,7 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
             both_previews = props.track_body and props.track_face
             preview_boxes = os.path.join(output_dir, "preview_boxes.json")
             if props.track_body:
-                cmd = [python_exe, os.path.join(addon_dir, "save_mhr_data.py"),
+                cmd = [python_exe, os.path.join(addon_dir, body_script),
                        "--video", actual_video, "--preview",
                        "--preview-step", preview_cli_step, "--output", body_preview]
                 _append_frame_args(cmd, start_frame, max_frames)
@@ -1448,7 +1512,7 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
                         body_cached = True
                         print("[OpenMocap] Body tracking data already cached, skipping.")
                 if not body_cached:
-                    cmd = [python_exe, os.path.join(addon_dir, "save_mhr_data.py"),
+                    cmd = [python_exe, os.path.join(addon_dir, body_script),
                            "--video", actual_video, "--output", body_npz]
                     _append_frame_args(cmd, start_frame, max_frames)
                     if capture_no_hands:
@@ -1468,7 +1532,7 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
                     # downloads — offline by design; if the fetch fails it
                     # demotes to the PyTorch backbone and still completes.
                     # Also self-heals "Non-NVIDIA" picked on a cuda install.
-                    if _cap_ort == "1":
+                    if engine == 'PRO' and _cap_ort == "1":
                         _bb = os.path.join(addon_dir, "checkpoints", "onnx",
                                            "backbone_dinov3_fp16.onnx")
                         _dl = os.path.join(addon_dir, "installer",
@@ -1547,7 +1611,7 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
 
         # Classify steps
         wmap = {"convert_source": (5, "convert"), "download_models": (10, "download"),
-                "save_mhr_data": (70, "body"), "save_face_data": (20 if not self.is_update_only else 30, "face"),
+                "save_mhr_data": (70, "body"), "save_mp_data": (70, "body"), "save_face_data": (20 if not self.is_update_only else 30, "face"),
                 "overlay_track": (10, "overlay")}
 
         # Prepend conversion step if needed (runs before tracking in the thread)
@@ -1577,8 +1641,8 @@ class OPENMOCAP_OT_generate_mocap(bpy.types.Operator):
         openmocap_state['step_labels'] = step_labels
         openmocap_state['step_outputs'] = step_outputs
 
-        capture_use_ort = _capture_use_ort_override(context)
-        capture_force_cpu = _capture_force_cpu(context)
+        capture_use_ort = _cap_ort
+        capture_force_cpu = _cap_cpu
         # Pre-set state before the thread starts so monitor_progress_timer
         # (registered with first_interval=0) can't read a previous run's
         # stale running=False / return_code=-2 before the worker's own

@@ -1652,10 +1652,10 @@ class OPENMOCAP_OT_donate(bpy.types.Operator):
     carries a OpenMocap-specific tooltip (wm.url_open's built-in
     description can't be overridden per-call)."""
     bl_idname = "openmocap.donate"
-    bl_label = "Donate / Support"
-    bl_description = "Open the OpenMocap donation page in your browser"
+    bl_label = "Project Page"
+    bl_description = "Open the Open Mocap project page in your browser"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        bpy.ops.wm.url_open(url="https://ko-fi.com/arcomade")
+        bpy.ops.wm.url_open(url="https://github.com/sakthiveltofficial/open-mocap")
         return {'FINISHED'}

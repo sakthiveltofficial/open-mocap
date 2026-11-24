@@ -452,6 +452,21 @@ def register():
         name="I have read and agree to the Meta SAM License", default=False)
     bpy.types.WindowManager.openmocap_install_force = bpy.props.BoolProperty(
         default=False)
+    bpy.types.WindowManager.openmocap_install_profile = bpy.props.EnumProperty(
+        name="Engines",
+        items=[('FAST', "Fast (MediaPipe)",
+                "MediaPipe pose, hands and face. Any CPU, about 150 MB"),
+               ('PRO', "Pro (SAM 3D Body)",
+                "Meta SAM 3D Body pipeline. NVIDIA GPU recommended, about 11 GB, "
+                "needs a Hugging Face token"),
+               ('BOTH', "Both", "Install both engines and switch per capture")],
+        default='FAST')
+    bpy.types.WindowManager.openmocap_install_hf_token = bpy.props.StringProperty(
+        name="Hugging Face token", subtype='PASSWORD', default="",
+        options={'SKIP_SAVE'},
+        description=("Read token from huggingface.co/settings/tokens, after "
+                     "accepting the license on the facebook/sam-3d-body-dinov3 "
+                     "model page. Only used for this install, never saved"))
     # Inline uninstall confirm: True while the red Confirm/Cancel block is
     # showing in the prefs panel. WindowManager-scoped, session-only.
     bpy.types.WindowManager.openmocap_uninstall_armed = bpy.props.BoolProperty(
@@ -806,6 +821,9 @@ def unregister():
     del bpy.types.WindowManager.openmocap_install_active
     del bpy.types.WindowManager.openmocap_install_page
     del bpy.types.WindowManager.openmocap_install_agreed
+    for _p in ("openmocap_install_profile", "openmocap_install_hf_token"):
+        if hasattr(bpy.types.WindowManager, _p):
+            delattr(bpy.types.WindowManager, _p)
     del bpy.types.WindowManager.openmocap_install_force
     del bpy.types.WindowManager.openmocap_uninstall_armed
     del bpy.types.Scene.openmocap_retarget_pairs
