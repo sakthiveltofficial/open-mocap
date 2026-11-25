@@ -39,6 +39,7 @@ Both engines write the **same skeleton**, so everything after capture is shared:
 - [Quick start](#quick-start)
 - [Documentation](#documentation)
 - [How it works](#how-it-works)
+- [Contributing](#contributing)
 - [Licensing](#licensing)
 - [Credits](#credits)
 
@@ -68,7 +69,7 @@ Both engines write the **same skeleton**, so everything after capture is shared:
 
 ## Install
 
-1. **Download the add-on.** On GitHub, click **Code > Download ZIP** (or grab a release zip).
+1. **Download the add-on.** Download `openmocap-v1.1.0.zip` from the [latest release](https://github.com/sakthiveltofficial/open-mocap/releases/latest) (recommended for Blender 4.2+ / 5.x).
 2. **Install it in Blender.** *Edit > Preferences > Add-ons*, open the menu in the top right and choose **Install from Disk...**, pick the zip, and enable **OpenMocap**.
 3. **Install the engines.** In the add-on preferences click **Install Dependencies**, pick **Fast**, **Pro** or **Both**, and follow the wizard. A console window opens and does the rest:
    - fetches [uv](https://docs.astral.sh/uv/) (a small Python manager) if you don't have it,
@@ -160,3 +161,7 @@ Models and third-party components keep their own licenses (full texts in [`licen
 - [ICT-FaceKit](https://github.com/USC-ICT/ICT-FaceKit) (USC Institute for Creative Technologies)
 - [uv](https://github.com/astral-sh/uv) (Astral), [PyTorch](https://pytorch.org/), [ONNX Runtime](https://onnxruntime.ai/)
 - [Blender](https://www.blender.org/) and its community.
+
+## Contributing
+
+Contributions, bug reports, and pull requests are welcome! Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening an issue or submitting a PR.
